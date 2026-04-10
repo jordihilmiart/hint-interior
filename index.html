@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Hint Interior</title>
+
+<style>
+body { margin:0; font-family:Arial; }
+.header { height:60px; background:#fff; display:flex; align-items:center; padding:0 20px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
+.container { display:flex; height:calc(100vh - 60px);}
+.sidebar { width:250px; background:#fff; padding:10px; border-right:1px solid #ddd;}
+.item { padding:10px; cursor:pointer; }
+.item:hover { background:#eee; }
+.canvas { flex:1; position:relative; background:#f5f5f5;}
+.box {
+  width:100px;
+  height:100px;
+  background:#333;
+  color:white;
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:move;
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">Hint Interior Planner</div>
+
+<div class="container">
+  <div class="sidebar">
+    <div class="item" onclick="addBox('Wardrobe')">Wardrobe</div>
+    <div class="item" onclick="addBox('Table')">Table</div>
+    <div class="item" onclick="addBox('Sofa')">Sofa</div>
+  </div>
+
+  <div class="canvas" id="canvas"></div>
+</div>
+
+<script>
+let canvas = document.getElementById('canvas');
+
+function addBox(name){
+  let box = document.createElement('div');
+  box.className = 'box';
+  box.innerText = name;
+  box.style.left = '50px';
+  box.style.top = '50px';
+
+  box.onmousedown = function(e){
+    let shiftX = e.clientX - box.offsetLeft;
+    let shiftY = e.clientY - box.offsetTop;
+
+    function moveAt(pageX, pageY){
+      box.style.left = pageX - shiftX + 'px';
+      box.style.top = pageY - shiftY + 'px';
+    }
+
+    function onMouseMove(e){
+      moveAt(e.pageX, e.pageY);
+    }
+
+    document.addEventListener('mousemove', onMouseMove);
+
+    document.onmouseup = function(){
+      document.removeEventListener('mousemove', onMouseMove);
+      document.onmouseup = null;
+    }
+  };
+
+  canvas.appendChild(box);
+}
+</script>
+
+</body>
+</html>
