@@ -1,0 +1,554 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hint Interior - Custom Furniture Planner</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Katalog */
+        .sidebar {
+            width: 320px;
+            background: #fff;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .search-container {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 25px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .catalog-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .catalog-category {
+            padding: 0 20px;
+            margin-bottom: 10px;
+        }
+
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+            padding: 12px 0 8px 0;
+            border-bottom: 2px solid #f7fafc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .catalog-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .catalog-item:hover {
+            background: #f7fafc;
+            transform: translateX(4px);
+        }
+
+        .catalog-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .catalog-item.active .item-icon {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .item-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .item-info p {
+            font-size: 12px;
+            color: #718096;
+            opacity: 0.8;
+        }
+
+        .catalog-item.active .item-info p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Main Canvas Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .top-bar {
+            height: 60px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .top-bar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(45deg, #f0f2f5 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f0f2f5 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f0f2f5 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f0f2f5 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            overflow: hidden;
+        }
+
+        .room-canvas {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .room {
+            width: 600px;
+            height: 400px;
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            position: relative;
+            border: 3px solid #e2e8f0;
+        }
+
+        .furniture-item {
+            position: absolute;
+            cursor: move;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 12px;
+            user-select: none;
+        }
+
+        .furniture-item:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transform: scale(1.05);
+        }
+
+        .wardrobe { background: linear-gradient(135deg, #ff6b6b, #ee5a24); width: 120px; height: 200px; }
+        .shelf { background: linear-gradient(135deg, #4ecdc4, #44a08d); width: 180px; height: 80px; }
+        .table { background: linear-gradient(135deg, #45b7d1, #96c93d); width: 150px; height: 100px; }
+        .chair { background: linear-gradient(135deg, #f9ca24, #f0932b); width: 60px; height: 70px; }
+        .sofa { background: linear-gradient(135deg, #6c5ce7, #a29bfe); width: 200px; height: 120px; }
+
+        .properties-panel {
+            position: absolute;
+            right: 20px;
+            top: 80px;
+            width: 300px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .prop-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .prop-group {
+            margin-bottom: 20px;
+        }
+
+        .prop-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prop-control {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .prop-control:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .color-picker {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 1200px) {
+            .properties-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Katalog -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-cube"></i> Hint Interior</h1>
+                <p>Custom Furniture Planner</p>
+            </div>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Cari furnitur...">
+            </div>
+
+            <div class="catalog-nav">
+                <div class="catalog-category">
+                    <div class="category-title">Kamar Tidur</div>
+                    <div class="catalog-item active" data-type="wardrobe">
+                        <div class="item-icon"><i class="fas fa-couch"></i></div>
+                        <div class="item-info">
+                            <h4>Lemari Pakaian</h4>
+                            <p>Custom wardrobe system</p>
+                        </div>
+                    </div>
+                    <div class="catalog-item" data-type="sofa">
+                        <div class="item-icon"><i class="fas fa-couch"></i></div>
+                        <div class="item-info">
+                            <h4>Sofa Custom</h4>
+                            <p>Modular sofa design</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="catalog-category">
+                    <div class="category-title">Ruang Tamu</div>
+                    <div class="catalog-item" data-type="shelf">
+                        <div class="item-icon"><i class="fas fa-boxes"></i></div>
+                        <div class="item-info">
+                            <h4>Rak Penyimpanan</h4>
+                            <p>Flexible shelving</p>
+                        </div>
+                    </div>
+                    <div class="catalog-item" data-type="table">
+                        <div class="item-icon"><i class="fas fa-table"></i></div>
+                        <div class="item-info">
+                            <h4>Meja Kerja</h4>
+                            <p>Custom desk solutions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="catalog-category">
+                    <div class="category-title">Dapur</div>
+                    <div class="catalog-item" data-type="chair">
+                        <div class="item-icon"><i class="fas fa-chair"></i></div>
+                        <div class="item-info">
+                            <h4>Kursi Custom</h4>
+                            <p>Ergonomic seating</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <div class="logo">Hint Interior</div>
+                    <div class="project-title">Proyek Baru - Ruang Tamu Modern</div>
+                </div>
+                <div class="top-bar-right">
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-save"></i> Simpan
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-share"></i> Export 3D
+                    </button>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+
+            <div class="canvas-container">
+                <div class="room-canvas">
+                    <div class="room" id="room">
+                        <!-- Furniture items akan ditambahkan secara dinamis -->
+                    </div>
+                </div>
+
+                <!-- Properties Panel -->
+                <div class="properties-panel">
+                    <div class="prop-title">
+                        <i class="fas fa-cog"></i> Pengaturan Furnitur
+                    </div>
+                    
+                    <div class="prop-group">
+                        <label class="prop-label">
+                            <i class="fas fa-ruler"></i> Lebar
+                        </label>
+                        <input type="range" class="prop-control" min="50" max="300" value="120">
+                        <span>120px</span>
+                    </div>
+
+                    <div class="prop-group">
+                        <label class="prop-label">
+                            <i class="fas fa-ruler-vertical"></i> Tinggi
+                        </label>
+                        <input type="range" class="prop-control" min="50" max="400" value="200">
+                        <span>200px</span>
+                    </div>
+
+                    <div class="prop-group">
+                        <label class="prop-label">
+                            <i class="fas fa-palette"></i> Warna
+                        </label>
+                        <input type="color" class="color-picker prop-control" value="#ff6b6b">
+                    </div>
+
+                    <div class="prop-group">
+                        <label class="prop-label">
+                            <i class="fas fa-layer-group"></i> Material
+                        </label>
+                        <select class="prop-control">
+                            <option>Kayu Jati</option>
+                            <option>Multiplek HPL</option>
+                            <option>Particle Board</option>
+                            <option>Metal Frame</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class HintInteriorPlanner {
+            constructor() {
+                this.selectedFurniture = null;
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.addFurniture('wardrobe');
+            }
+
+            bindEvents() {
+                // Catalog selection
+                document.querySelectorAll('.catalog-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const type = e.currentTarget.dataset.type;
+                        document.querySelectorAll('.catalog-item').forEach(i => i.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        this.addFurniture(type);
+                    });
+                });
+
+                // Drag & Drop functionality
+                this.room = document.getElementById('room');
+                this.room.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                });
+
+                this.room.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const type = e.dataTransfer.getData('text/plain');
+                    this.addFurniture(type);
+                });
+
+                // Properties panel controls
+                document.querySelectorAll('.prop-control[type="range"]').forEach(range => {
+                    range.addEventListener('input', (e) => {
+                        if (this.selectedFurniture) {
+                            const value = e.target.value + 'px';
+                            this.selectedFurniture.style[e.target.previousElementSibling.textContent.includes('Lebar') ? 'width' : 'height'] = value;
+                            e.target.nextElementSibling.textContent = e.target.value + 'px';
+                        }
+                    });
+                });
+
+                document.querySelector('.color-picker').addEventListener('change', (e) => {
+                    if (this.selectedFurniture) {
+                        this.selectedFurniture.style.background = e.target.value;
+                    }
+                });
+            }
+
+            addFurniture(type) {
+                const furniture = document.createElement('div');
+                furniture.className = `furniture-item ${type}`;
+                furniture.draggable = true;
+                furniture.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                furniture.style.left = Math.random() * 200 + 50 + 'px';
+                furniture.style.top = Math.random() * 150 + 50 + 'px';
+
+                // Drag functionality
+                furniture.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', type);
+                });
+
+                // Click to select
+                furniture.addEventListener('click', (e) => {
+                    document.querySelectorAll('.furniture-item').forEach(item => {
