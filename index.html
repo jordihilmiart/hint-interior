@@ -3,117 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hint Interior - 3D Furniture Planner</title>
+    <title>Hint Interior - Furniture Planner</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container" id="appContainer">
-        <!-- Loading Screen -->
-        <div class="loading-screen" id="loadingScreen">
-            <div class="loading-content">
-                <div class="logo-spin">
-                    <i class="fas fa-cube"></i>
+    <div class="app-container">
+        <!-- Sidebar Kiri - Katalog -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-cube"></i> Hint Interior</h1>
+                <p>Furniture Planner Pro</p>
+            </div>
+            
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchFurniture" placeholder="Cari furniture...">
+            </div>
+
+            <div class="catalog-scroll" id="catalog">
+                <!-- Furniture catalog akan di-generate oleh JS -->
+            </div>
+        </div>
+
+        <!-- Area Utama -->
+        <div class="main-area">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="project-info">
+                    <h2 id="projectName">Desain Ruang Tamu</h2>
+                    <div class="stats">
+                        <span id="itemCount">0 furniture</span>
+                        <span id="totalPrice">Rp 0</span>
+                        <span id="roomSize">0 m²</span>
+                    </div>
                 </div>
-                <h2>Loading Hint Interior...</h2>
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
+                <div class="top-buttons">
+                    <button class="btn" onclick="resetRoom()"><i class="fas fa-redo"></i></button>
+                    <button class="btn" onclick="saveDesign()"><i class="fas fa-save"></i></button>
+                    <button class="btn primary" onclick="exportDesign()"><i class="fas fa-download"></i> Export</button>
+                </div>
+            </div>
+
+            <!-- Canvas Ruangan -->
+            <div class="canvas-container">
+                <canvas id="roomCanvas" width="1200" height="700"></canvas>
+                <div class="properties-panel" id="propPanel">
+                    <div class="panel-header">
+                        <h3>Pengaturan</h3>
+                        <button onclick="closePanel()">×</button>
+                    </div>
+                    <div id="propContent"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Main App -->
-        <div class="main-app">
-            <!-- Left Sidebar - Catalog -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="header-top">
-                        <h1>Hint Interior</h1>
-                        <button class="sidebar-toggle" id="sidebarToggle">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                    </div>
-                    <p>Custom Furniture Planner</p>
-                </div>
-
-                <div class="search-section">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="searchInput" placeholder="Cari furnitur...">
-                    </div>
-                </div>
-
-                <div class="catalog-container" id="catalogContainer">
-                    <!-- Catalog items will be populated by JS -->
-                </div>
+        <!-- Sidebar Kanan - Keranjang -->
+        <div class="cart-sidebar">
+            <div class="cart-header">
+                <h3><i class="fas fa-shopping-cart"></i> Keranjang</h3>
             </div>
-
-            <!-- Main Canvas Area -->
-            <div class="main-content">
-                <!-- Top Navigation -->
-                <div class="top-nav">
-                    <div class="nav-left">
-                        <div class="project-info">
-                            <h2 id="projectTitle">Ruang Tamu Modern</h2>
-                            <div class="project-meta">
-                                <span id="itemCount">0 item</span>
-                                <span>•</span>
-                                <span id="projectSize">0 m²</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="nav-right">
-                        <button class="btn btn-secondary" id="undoBtn" title="Undo">
-                            <i class="fas fa-undo"></i>
-                        </button>
-                        <button class="btn btn-secondary" id="resetBtn" title="Reset Room">
-                            <i class="fas fa-redo"></i>
-                        </button>
-                        <button class="btn btn-primary" id="saveBtn">
-                            <i class="fas fa-save"></i> Simpan
-                        </button>
-                        <button class="btn btn-primary" id="exportBtn">
-                            <i class="fas fa-download"></i> Export 3D
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Canvas Container -->
-                <div class="canvas-wrapper">
-                    <canvas class="room-canvas" id="roomCanvas"></canvas>
-                    
-                    <!-- Floating Properties Panel -->
-                    <div class="properties-panel" id="propertiesPanel">
-                        <div class="panel-header">
-                            <h3><i class="fas fa-cog"></i> Pengaturan Furnitur</h3>
-                            <button class="panel-close" id="panelClose">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="prop-sections" id="propSections">
-                            <!-- Dynamic properties -->
-                        </div>
-                    </div>
-
-                    <!-- Grid Overlay -->
-                    <div class="grid-overlay" id="gridOverlay"></div>
-                </div>
-            </div>
-
-            <!-- Right Sidebar - Layers & Measurements -->
-            <div class="right-sidebar" id="rightSidebar">
-                <div class="sidebar-header">
-                    <h3>Layers</h3>
-                </div>
-                <div class="layers-container">
-                    <div class="layer-item active">
-                        <i class="fas fa-layer-group"></i>
-                        <span>Main Layer</span>
-                        <div class="layer-count">3</div>
-                    </div>
-                </div>
+            <div class="cart-items" id="cartItems"></div>
+            <div class="cart-total">
+                <div>Total: <span id="grandTotal">Rp 0</span></div>
+                <button class="btn primary full" onclick="checkout()">Checkout</button>
             </div>
         </div>
     </div>
