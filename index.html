@@ -1,132 +1,191 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Hint Interior Planner</title>
+<meta charset="UTF-8">
+<title>Hint Interior Planner</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #f5f5f5;
-    }
+<style>
+body {
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f6f6f6;
+}
 
-    .header {
-      height: 60px;
-      background: white;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
+/* HEADER */
+.header {
+  height:60px;
+  background:white;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 20px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+.logo {
+  font-weight:bold;
+  font-size:18px;
+}
+.menu {
+  display:flex;
+  gap:20px;
+  font-size:14px;
+  color:#555;
+}
 
-    .container {
-      display: flex;
-      height: calc(100vh - 60px);
-    }
+/* LAYOUT */
+.container {
+  display:flex;
+  height:calc(100vh - 60px);
+}
 
-    .sidebar {
-      width: 250px;
-      background: white;
-      padding: 10px;
-      border-right: 1px solid #ddd;
-    }
+/* SIDEBAR */
+.sidebar {
+  width:280px;
+  background:white;
+  padding:15px;
+  border-right:1px solid #ddd;
+  overflow-y:auto;
+}
+.category {
+  font-weight:bold;
+  margin-top:15px;
+  margin-bottom:5px;
+}
+.item {
+  padding:10px;
+  margin-bottom:5px;
+  background:#f2f2f2;
+  border-radius:6px;
+  cursor:pointer;
+}
+.item:hover {
+  background:#e0e0e0;
+}
 
-    .item {
-      padding: 10px;
-      cursor: pointer;
-      border-radius: 6px;
-    }
+/* CANVAS */
+.canvas {
+  flex:1;
+  position:relative;
+  background:
+    linear-gradient(#eee 1px, transparent 1px),
+    linear-gradient(90deg, #eee 1px, transparent 1px);
+  background-size:40px 40px;
+}
 
-    .item:hover {
-      background: #eee;
-    }
+/* FURNITURE */
+.box {
+  position:absolute;
+  background:#2c2c2c;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:8px;
+  cursor:move;
+  font-size:12px;
+}
 
-    .canvas {
-      flex: 1;
-      position: relative;
-      background: repeating-linear-gradient(
-        0deg,
-        #eee,
-        #eee 1px,
-        transparent 1px,
-        transparent 40px
-      ),
-      repeating-linear-gradient(
-        90deg,
-        #eee,
-        #eee 1px,
-        transparent 1px,
-        transparent 40px
-      );
-    }
-
-    .box {
-      width: 100px;
-      height: 100px;
-      background: #333;
-      color: white;
-      position: absolute;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: move;
-      border-radius: 8px;
-    }
-  </style>
+/* TOOLBAR */
+.toolbar {
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:white;
+  padding:10px;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,0.2);
+}
+button {
+  padding:5px 10px;
+  border:none;
+  background:#333;
+  color:white;
+  cursor:pointer;
+}
+button:hover {
+  background:#555;
+}
+</style>
 </head>
 
 <body>
 
-<div class="header">Hint Interior Planner</div>
+<div class="header">
+  <div class="logo">Hint Interior</div>
+  <div class="menu">
+    <div>Dashboard</div>
+    <div>Planner</div>
+    <div>Catalog</div>
+  </div>
+</div>
 
 <div class="container">
 
   <div class="sidebar">
-    <div class="item" onclick="addBox('Wardrobe')">Wardrobe</div>
-    <div class="item" onclick="addBox('Table')">Table</div>
-    <div class="item" onclick="addBox('Sofa')">Sofa</div>
+    <div class="category">Storage</div>
+    <div class="item" onclick="addBox('Wardrobe',120,200)">Wardrobe</div>
+
+    <div class="category">Living Room</div>
+    <div class="item" onclick="addBox('Sofa',200,100)">Sofa</div>
+
+    <div class="category">Dining</div>
+    <div class="item" onclick="addBox('Table',150,100)">Table</div>
   </div>
 
-  <div class="canvas" id="canvas"></div>
+  <div class="canvas" id="canvas">
+
+    <div class="toolbar">
+      <button onclick="clearCanvas()">Clear</button>
+    </div>
+
+  </div>
 
 </div>
 
 <script>
-  const canvas = document.getElementById('canvas');
+const canvas = document.getElementById('canvas');
 
-  function addBox(name) {
-    const box = document.createElement('div');
-    box.className = 'box';
-    box.innerText = name;
+function addBox(name,w,h){
+  const box = document.createElement('div');
+  box.className = 'box';
+  box.innerText = name;
 
-    box.style.left = '50px';
-    box.style.top = '50px';
+  box.style.width = w + 'px';
+  box.style.height = h + 'px';
+  box.style.left = '50px';
+  box.style.top = '50px';
 
-    box.onmousedown = function(e) {
-      const shiftX = e.clientX - box.offsetLeft;
-      const shiftY = e.clientY - box.offsetTop;
+  box.onmousedown = function(e){
+    const shiftX = e.clientX - box.offsetLeft;
+    const shiftY = e.clientY - box.offsetTop;
 
-      function moveAt(pageX, pageY) {
-        box.style.left = pageX - shiftX + 'px';
-        box.style.top = pageY - shiftY + 'px';
-      }
+    function moveAt(pageX, pageY){
+      box.style.left = pageX - shiftX + 'px';
+      box.style.top = pageY - shiftY + 'px';
+    }
 
-      function onMouseMove(e) {
-        moveAt(e.pageX, e.pageY);
-      }
+    function onMouseMove(e){
+      moveAt(e.pageX, e.pageY);
+    }
 
-      document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mousemove', onMouseMove);
 
-      document.onmouseup = function() {
-        document.removeEventListener('mousemove', onMouseMove);
-        document.onmouseup = null;
-      };
-    };
+    document.onmouseup = function(){
+      document.removeEventListener('mousemove', onMouseMove);
+      document.onmouseup = null;
+    }
+  };
 
-    canvas.appendChild(box);
-  }
+  canvas.appendChild(box);
+}
+
+function clearCanvas(){
+  canvas.innerHTML = `
+    <div class="toolbar">
+      <button onclick="clearCanvas()">Clear</button>
+    </div>
+  `;
+}
 </script>
 
 </body>
