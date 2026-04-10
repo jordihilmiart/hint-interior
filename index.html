@@ -1,76 +1,234 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hint Interior - Furniture Planner</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<meta charset="UTF-8">
+<title>Hint Interior Planner</title>
+
+<style>
+body { margin:0; font-family:Arial; background:#f6f6f6; }
+
+/* HEADER */
+.header {
+  height:60px; background:#fff; display:flex;
+  align-items:center; justify-content:space-between;
+  padding:0 20px; box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* LAYOUT */
+.container { display:flex; height:calc(100vh - 60px); }
+
+/* SIDEBAR */
+.sidebar {
+  width:250px; background:#fff; padding:10px;
+  border-right:1px solid #ddd;
+}
+.item {
+  padding:10px; margin-bottom:5px;
+  background:#eee; cursor:pointer;
+}
+
+/* CANVAS */
+.canvas {
+  flex:1; position:relative;
+  background:
+    linear-gradient(#eee 1px, transparent 1px),
+    linear-gradient(90deg, #eee 1px, transparent 1px);
+  background-size:40px 40px;
+}
+
+/* OBJECT */
+.box {
+  position:absolute;
+  background:#333;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:move;
+  border-radius:6px;
+}
+
+/* PANEL */
+.panel {
+  width:250px;
+  background:#fff;
+  border-left:1px solid #ddd;
+  padding:10px;
+}
+
+button {
+  width:100%; margin-top:5px;
+}
+</style>
 </head>
+
 <body>
-    <div class="app-container">
-        <!-- Sidebar Kiri - Katalog -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h1><i class="fas fa-cube"></i> Hint Interior</h1>
-                <p>Furniture Planner Pro</p>
-            </div>
-            
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchFurniture" placeholder="Cari furniture...">
-            </div>
 
-            <div class="catalog-scroll" id="catalog">
-                <!-- Furniture catalog akan di-generate oleh JS -->
-            </div>
-        </div>
+<div class="header">
+  <b>Hint Interior</b>
+  <div>
+    <button onclick="save()">Save</button>
+    <button onclick="load()">Load</button>
+    <button onclick="exportImg()">Export</button>
+  </div>
+</div>
 
-        <!-- Area Utama -->
-        <div class="main-area">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="project-info">
-                    <h2 id="projectName">Desain Ruang Tamu</h2>
-                    <div class="stats">
-                        <span id="itemCount">0 furniture</span>
-                        <span id="totalPrice">Rp 0</span>
-                        <span id="roomSize">0 m²</span>
-                    </div>
-                </div>
-                <div class="top-buttons">
-                    <button class="btn" onclick="resetRoom()"><i class="fas fa-redo"></i></button>
-                    <button class="btn" onclick="saveDesign()"><i class="fas fa-save"></i></button>
-                    <button class="btn primary" onclick="exportDesign()"><i class="fas fa-download"></i> Export</button>
-                </div>
-            </div>
+<div class="container">
 
-            <!-- Canvas Ruangan -->
-            <div class="canvas-container">
-                <canvas id="roomCanvas" width="1200" height="700"></canvas>
-                <div class="properties-panel" id="propPanel">
-                    <div class="panel-header">
-                        <h3>Pengaturan</h3>
-                        <button onclick="closePanel()">×</button>
-                    </div>
-                    <div id="propContent"></div>
-                </div>
-            </div>
-        </div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="item" onclick="add('Wardrobe',120,200,1500000)">Wardrobe</div>
+    <div class="item" onclick="add('Table',150,100,800000)">Table</div>
+    <div class="item" onclick="add('Sofa',200,100,1200000)">Sofa</div>
+  </div>
 
-        <!-- Sidebar Kanan - Keranjang -->
-        <div class="cart-sidebar">
-            <div class="cart-header">
-                <h3><i class="fas fa-shopping-cart"></i> Keranjang</h3>
-            </div>
-            <div class="cart-items" id="cartItems"></div>
-            <div class="cart-total">
-                <div>Total: <span id="grandTotal">Rp 0</span></div>
-                <button class="btn primary full" onclick="checkout()">Checkout</button>
-            </div>
-        </div>
-    </div>
+  <!-- CANVAS -->
+  <div class="canvas" id="canvas"></div>
 
-    <script src="app.js"></script>
+  <!-- PANEL -->
+  <div class="panel">
+    <h3>Custom</h3>
+    Width: <input id="w" type="number"><br>
+    Height: <input id="h" type="number"><br>
+    Price: <input id="price" type="number"><br>
+    <button onclick="apply()">Apply</button>
+    <button onclick="rotate()">Rotate</button>
+
+    <h3>Total</h3>
+    <div id="total">0</div>
+  </div>
+
+</div>
+
+<script>
+let canvas = document.getElementById("canvas");
+let selected = null;
+let items = [];
+
+// ADD ITEM
+function add(name,w,h,price){
+  let el = document.createElement("div");
+  el.className = "box";
+  el.innerText = name;
+
+  el.style.width = w+"px";
+  el.style.height = h+"px";
+  el.style.left = "50px";
+  el.style.top = "50px";
+
+  el.dataset.price = price;
+
+  drag(el);
+  select(el);
+
+  canvas.appendChild(el);
+  items.push(el);
+
+  updateTotal();
+}
+
+// DRAG
+function drag(el){
+  el.onmousedown = e=>{
+    select(el);
+    let shiftX = e.clientX - el.offsetLeft;
+    let shiftY = e.clientY - el.offsetTop;
+
+    function move(e){
+      let x = e.pageX - shiftX;
+      let y = e.pageY - shiftY;
+
+      // SNAP GRID
+      x = Math.round(x/40)*40;
+      y = Math.round(y/40)*40;
+
+      el.style.left = x+"px";
+      el.style.top = y+"px";
+    }
+
+    document.addEventListener("mousemove", move);
+
+    document.onmouseup = ()=>{
+      document.removeEventListener("mousemove", move);
+    }
+  }
+}
+
+// SELECT
+function select(el){
+  selected = el;
+  document.getElementById("w").value = parseInt(el.style.width);
+  document.getElementById("h").value = parseInt(el.style.height);
+  document.getElementById("price").value = el.dataset.price;
+}
+
+// APPLY CUSTOM
+function apply(){
+  if(!selected) return;
+  selected.style.width = w.value+"px";
+  selected.style.height = h.value+"px";
+  selected.dataset.price = price.value;
+  updateTotal();
+}
+
+// ROTATE
+function rotate(){
+  if(!selected) return;
+  let w = selected.style.width;
+  selected.style.width = selected.style.height;
+  selected.style.height = w;
+}
+
+// TOTAL PRICE
+function updateTotal(){
+  let total = 0;
+  items.forEach(i=> total += parseInt(i.dataset.price||0));
+  document.getElementById("total").innerText = "Rp " + total;
+}
+
+// SAVE
+function save(){
+  let data = items.map(i=>({
+    name:i.innerText,
+    x:i.style.left,
+    y:i.style.top,
+    w:i.style.width,
+    h:i.style.height,
+    price:i.dataset.price
+  }));
+  localStorage.setItem("design", JSON.stringify(data));
+}
+
+// LOAD
+function load(){
+  canvas.innerHTML="";
+  items=[];
+  let data = JSON.parse(localStorage.getItem("design")||"[]");
+
+  data.forEach(d=>{
+    let el = document.createElement("div");
+    el.className="box";
+    el.innerText=d.name;
+
+    el.style.left=d.x;
+    el.style.top=d.y;
+    el.style.width=d.w;
+    el.style.height=d.h;
+    el.dataset.price=d.price;
+
+    drag(el);
+    canvas.appendChild(el);
+    items.push(el);
+  });
+
+  updateTotal();
+}
+
+// EXPORT
+function exportImg(){
+  alert("Fitur export gambar biasanya butuh library tambahan (html2canvas). Bisa kita upgrade nanti 🔥");
+}
+</script>
+
 </body>
 </html>
