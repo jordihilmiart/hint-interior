@@ -1,192 +1,123 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Hint Interior Planner</title>
-
-<style>
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f6f6f6;
-}
-
-/* HEADER */
-.header {
-  height:60px;
-  background:white;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 20px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
-}
-.logo {
-  font-weight:bold;
-  font-size:18px;
-}
-.menu {
-  display:flex;
-  gap:20px;
-  font-size:14px;
-  color:#555;
-}
-
-/* LAYOUT */
-.container {
-  display:flex;
-  height:calc(100vh - 60px);
-}
-
-/* SIDEBAR */
-.sidebar {
-  width:280px;
-  background:white;
-  padding:15px;
-  border-right:1px solid #ddd;
-  overflow-y:auto;
-}
-.category {
-  font-weight:bold;
-  margin-top:15px;
-  margin-bottom:5px;
-}
-.item {
-  padding:10px;
-  margin-bottom:5px;
-  background:#f2f2f2;
-  border-radius:6px;
-  cursor:pointer;
-}
-.item:hover {
-  background:#e0e0e0;
-}
-
-/* CANVAS */
-.canvas {
-  flex:1;
-  position:relative;
-  background:
-    linear-gradient(#eee 1px, transparent 1px),
-    linear-gradient(90deg, #eee 1px, transparent 1px);
-  background-size:40px 40px;
-}
-
-/* FURNITURE */
-.box {
-  position:absolute;
-  background:#2c2c2c;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:8px;
-  cursor:move;
-  font-size:12px;
-}
-
-/* TOOLBAR */
-.toolbar {
-  position:absolute;
-  top:10px;
-  right:10px;
-  background:white;
-  padding:10px;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.2);
-}
-button {
-  padding:5px 10px;
-  border:none;
-  background:#333;
-  color:white;
-  cursor:pointer;
-}
-button:hover {
-  background:#555;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hint Interior - 3D Furniture Planner</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
+    <div class="app-container" id="appContainer">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-content">
+                <div class="logo-spin">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h2>Loading Hint Interior...</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
 
-<div class="header">
-  <div class="logo">Hint Interior</div>
-  <div class="menu">
-    <div>Dashboard</div>
-    <div>Planner</div>
-    <div>Catalog</div>
-  </div>
-</div>
+        <!-- Main App -->
+        <div class="main-app">
+            <!-- Left Sidebar - Catalog -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <div class="header-top">
+                        <h1>Hint Interior</h1>
+                        <button class="sidebar-toggle" id="sidebarToggle">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                    </div>
+                    <p>Custom Furniture Planner</p>
+                </div>
 
-<div class="container">
+                <div class="search-section">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Cari furnitur...">
+                    </div>
+                </div>
 
-  <div class="sidebar">
-    <div class="category">Storage</div>
-    <div class="item" onclick="addBox('Wardrobe',120,200)">Wardrobe</div>
+                <div class="catalog-container" id="catalogContainer">
+                    <!-- Catalog items will be populated by JS -->
+                </div>
+            </div>
 
-    <div class="category">Living Room</div>
-    <div class="item" onclick="addBox('Sofa',200,100)">Sofa</div>
+            <!-- Main Canvas Area -->
+            <div class="main-content">
+                <!-- Top Navigation -->
+                <div class="top-nav">
+                    <div class="nav-left">
+                        <div class="project-info">
+                            <h2 id="projectTitle">Ruang Tamu Modern</h2>
+                            <div class="project-meta">
+                                <span id="itemCount">0 item</span>
+                                <span>•</span>
+                                <span id="projectSize">0 m²</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-right">
+                        <button class="btn btn-secondary" id="undoBtn" title="Undo">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="btn btn-secondary" id="resetBtn" title="Reset Room">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="btn btn-primary" id="saveBtn">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                        <button class="btn btn-primary" id="exportBtn">
+                            <i class="fas fa-download"></i> Export 3D
+                        </button>
+                    </div>
+                </div>
 
-    <div class="category">Dining</div>
-    <div class="item" onclick="addBox('Table',150,100)">Table</div>
-  </div>
+                <!-- Canvas Container -->
+                <div class="canvas-wrapper">
+                    <canvas class="room-canvas" id="roomCanvas"></canvas>
+                    
+                    <!-- Floating Properties Panel -->
+                    <div class="properties-panel" id="propertiesPanel">
+                        <div class="panel-header">
+                            <h3><i class="fas fa-cog"></i> Pengaturan Furnitur</h3>
+                            <button class="panel-close" id="panelClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="prop-sections" id="propSections">
+                            <!-- Dynamic properties -->
+                        </div>
+                    </div>
 
-  <div class="canvas" id="canvas">
+                    <!-- Grid Overlay -->
+                    <div class="grid-overlay" id="gridOverlay"></div>
+                </div>
+            </div>
 
-    <div class="toolbar">
-      <button onclick="clearCanvas()">Clear</button>
+            <!-- Right Sidebar - Layers & Measurements -->
+            <div class="right-sidebar" id="rightSidebar">
+                <div class="sidebar-header">
+                    <h3>Layers</h3>
+                </div>
+                <div class="layers-container">
+                    <div class="layer-item active">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Main Layer</span>
+                        <div class="layer-count">3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-  </div>
-
-</div>
-
-<script>
-const canvas = document.getElementById('canvas');
-
-function addBox(name,w,h){
-  const box = document.createElement('div');
-  box.className = 'box';
-  box.innerText = name;
-
-  box.style.width = w + 'px';
-  box.style.height = h + 'px';
-  box.style.left = '50px';
-  box.style.top = '50px';
-
-  box.onmousedown = function(e){
-    const shiftX = e.clientX - box.offsetLeft;
-    const shiftY = e.clientY - box.offsetTop;
-
-    function moveAt(pageX, pageY){
-      box.style.left = pageX - shiftX + 'px';
-      box.style.top = pageY - shiftY + 'px';
-    }
-
-    function onMouseMove(e){
-      moveAt(e.pageX, e.pageY);
-    }
-
-    document.addEventListener('mousemove', onMouseMove);
-
-    document.onmouseup = function(){
-      document.removeEventListener('mousemove', onMouseMove);
-      document.onmouseup = null;
-    }
-  };
-
-  canvas.appendChild(box);
-}
-
-function clearCanvas(){
-  canvas.innerHTML = `
-    <div class="toolbar">
-      <button onclick="clearCanvas()">Clear</button>
-    </div>
-  `;
-}
-</script>
-
+    <script src="app.js"></script>
 </body>
 </html>
