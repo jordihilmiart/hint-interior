@@ -1,36 +1,88 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Hint Interior</title>
+  <meta charset="UTF-8">
+  <title>Hint Interior Planner</title>
 
-<style>
-body { margin:0; font-family:Arial; }
-.header { height:60px; background:#fff; display:flex; align-items:center; padding:0 20px; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.1);}
-.container { display:flex; height:calc(100vh - 60px);}
-.sidebar { width:250px; background:#fff; padding:10px; border-right:1px solid #ddd;}
-.item { padding:10px; cursor:pointer; }
-.item:hover { background:#eee; }
-.canvas { flex:1; position:relative; background:#f5f5f5;}
-.box {
-  width:100px;
-  height:100px;
-  background:#333;
-  color:white;
-  position:absolute;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:move;
-}
-</style>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #f5f5f5;
+    }
 
+    .header {
+      height: 60px;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+
+    .sidebar {
+      width: 250px;
+      background: white;
+      padding: 10px;
+      border-right: 1px solid #ddd;
+    }
+
+    .item {
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .item:hover {
+      background: #eee;
+    }
+
+    .canvas {
+      flex: 1;
+      position: relative;
+      background: repeating-linear-gradient(
+        0deg,
+        #eee,
+        #eee 1px,
+        transparent 1px,
+        transparent 40px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        #eee,
+        #eee 1px,
+        transparent 1px,
+        transparent 40px
+      );
+    }
+
+    .box {
+      width: 100px;
+      height: 100px;
+      background: #333;
+      color: white;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: move;
+      border-radius: 8px;
+    }
+  </style>
 </head>
+
 <body>
 
 <div class="header">Hint Interior Planner</div>
 
 <div class="container">
+
   <div class="sidebar">
     <div class="item" onclick="addBox('Wardrobe')">Wardrobe</div>
     <div class="item" onclick="addBox('Table')">Table</div>
@@ -38,41 +90,43 @@ body { margin:0; font-family:Arial; }
   </div>
 
   <div class="canvas" id="canvas"></div>
+
 </div>
 
 <script>
-let canvas = document.getElementById('canvas');
+  const canvas = document.getElementById('canvas');
 
-function addBox(name){
-  let box = document.createElement('div');
-  box.className = 'box';
-  box.innerText = name;
-  box.style.left = '50px';
-  box.style.top = '50px';
+  function addBox(name) {
+    const box = document.createElement('div');
+    box.className = 'box';
+    box.innerText = name;
 
-  box.onmousedown = function(e){
-    let shiftX = e.clientX - box.offsetLeft;
-    let shiftY = e.clientY - box.offsetTop;
+    box.style.left = '50px';
+    box.style.top = '50px';
 
-    function moveAt(pageX, pageY){
-      box.style.left = pageX - shiftX + 'px';
-      box.style.top = pageY - shiftY + 'px';
-    }
+    box.onmousedown = function(e) {
+      const shiftX = e.clientX - box.offsetLeft;
+      const shiftY = e.clientY - box.offsetTop;
 
-    function onMouseMove(e){
-      moveAt(e.pageX, e.pageY);
-    }
+      function moveAt(pageX, pageY) {
+        box.style.left = pageX - shiftX + 'px';
+        box.style.top = pageY - shiftY + 'px';
+      }
 
-    document.addEventListener('mousemove', onMouseMove);
+      function onMouseMove(e) {
+        moveAt(e.pageX, e.pageY);
+      }
 
-    document.onmouseup = function(){
-      document.removeEventListener('mousemove', onMouseMove);
-      document.onmouseup = null;
-    }
-  };
+      document.addEventListener('mousemove', onMouseMove);
 
-  canvas.appendChild(box);
-}
+      document.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        document.onmouseup = null;
+      };
+    };
+
+    canvas.appendChild(box);
+  }
 </script>
 
 </body>
