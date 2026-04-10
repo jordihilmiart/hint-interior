@@ -1,3 +1,6 @@
+// Global planner instance
+let planner;
+
 class HintInteriorPlanner {
     constructor() {
         this.canvas = null;
@@ -6,12 +9,12 @@ class HintInteriorPlanner {
         this.selectedItem = null;
         this.isDragging = false;
         this.dragOffset = { x: 0, y: 0 };
-        this.roomWidth = 1200;
-        this.roomHeight = 700;
-        this.gridSize = 20;
+        this.roomWidth = 1000;
+        this.roomHeight = 600;
+        this.gridSize = 25;
         this.catalogData = this.getCatalogData();
         this.history = [];
-        this.historyIndex = -1;
+        this.isLoaded = false;
         
         this.init();
     }
@@ -22,14 +25,29 @@ class HintInteriorPlanner {
         this.setupCanvas();
         this.populateCatalog();
         this.bindEvents();
-        this.startApp();
+        this.hideLoadingScreen();
+        this.render();
+        this.isLoaded = true;
+        console.log('Hint Interior Planner loaded successfully!');
+    }
+
+    hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        const progressFill = document.querySelector('.progress-fill');
+        
+        // Animate progress
+        progressFill.style.width = '100%';
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+        }, 1500);
     }
 
     setupCanvas() {
+        const rect = this.canvas.getBoundingClientRect();
         this.canvas.width = window.innerWidth - 360 - 280;
         this.canvas.height = window.innerHeight - 80;
-        this.roomWidth = this.canvas.width * 0.8;
-        this.roomHeight = this.canvas.height * 0.85;
+        this.roomWidth = this.canvas.width * 0.85;
+        this.roomHeight = this.canvas.height * 0.9;
         this.roomX = (this.canvas.width - this.roomWidth) / 2;
         this.roomY = (this.canvas.height - this.roomHeight) / 2;
     }
@@ -39,98 +57,28 @@ class HintInteriorPlanner {
             {
                 category: 'KAT. TIDUR',
                 items: [
-                    {
-                        id: 'wardrobe-1',
-                        name: 'Lemari Pakaian 3 Pintu',
-                        type: 'wardrobe',
-                        width: 140,
-                        height: 220,
-                        color: '#ff6b6b',
-                        icon: 'fas fa-couch',
-                        price: 'Rp 8.500.000',
-                        materials: ['Kayu Jati', 'HPL Premium', 'Multiplek']
-                    },
-                    {
-                        id: 'bed-1',
-                        name: 'Tempat Tidur Queen',
-                        type: 'bed',
-                        width: 280,
-                        height: 180,
-                        color: '#fd79a8',
-                        icon: 'fas fa-bed',
-                        price: 'Rp 12.000.000',
-                        materials: ['Kayu Mahoni', 'Busa Premium']
-                    }
+                    { id: 'wardrobe', name: 'Lemari 3 Pintu', type: 'wardrobe', width: 140, height: 220, color: '#ff6b6b', icon: 'fas fa-couch', price: 'Rp 8.5jt' },
+                    { id: 'bed', name: 'Queen Bed', type: 'bed', width: 280, height: 180, color: '#fd79a8', icon: 'fas fa-bed', price: 'Rp 12jt' }
                 ]
             },
             {
                 category: 'RUANG TAMU',
                 items: [
-                    {
-                        id: 'sofa-1',
-                        name: 'Sofa L Modular',
-                        type: 'sofa',
-                        width: 220,
-                        height: 130,
-                        color: '#6c5ce7',
-                        icon: 'fas fa-couch',
-                        price: 'Rp 15.500.000',
-                        materials: ['Kain Katun', 'Kulit Sintetis']
-                    },
-                    {
-                        id: 'shelf-1',
-                        name: 'Rak TV Minimalis',
-                        type: 'shelf',
-                        width: 200,
-                        height: 90,
-                        color: '#4ecdc4',
-                        icon: 'fas fa-boxes',
-                        price: 'Rp 4.200.000',
-                        materials: ['Multiplek', 'Kaca Tempered']
-                    }
+                    { id: 'sofa', name: 'Sofa L', type: 'sofa', width: 220, height: 130, color: '#6c5ce7', icon: 'fas fa-couch', price: 'Rp 15.5jt' },
+                    { id: 'shelf', name: 'Rak TV', type: 'shelf', width: 200, height: 90, color: '#4ecdc4', icon: 'fas fa-boxes', price: 'Rp 4.2jt' }
                 ]
             },
             {
                 category: 'KANTOR',
                 items: [
-                    {
-                        id: 'table-1',
-                        name: 'Meja L-Shape',
-                        type: 'table',
-                        width: 160,
-                        height: 110,
-                        color: '#45b7d1',
-                        icon: 'fas fa-table',
-                        price: 'Rp 6.800.000',
-                        materials: ['Kayu Solid', 'Metal Frame']
-                    },
-                    {
-                        id: 'chair-1',
-                        name: 'Kursi Ergonomic',
-                        type: 'chair',
-                        width: 70,
-                        height: 80,
-                        color: '#f9ca24',
-                        icon: 'fas fa-chair',
-                        price: 'Rp 3.200.000',
-                        materials: ['Mesh Breathable', 'Busa High Density']
-                    }
+                    { id: 'table', name: 'Meja L', type: 'table', width: 160, height: 110, color: '#45b7d1', icon: 'fas fa-table', price: 'Rp 6.8jt' },
+                    { id: 'chair', name: 'Kursi Office', type: 'chair', width: 70, height: 80, color: '#f9ca24', icon: 'fas fa-chair', price: 'Rp 3.2jt' }
                 ]
             },
             {
                 category: 'PENYIMPANAN',
                 items: [
-                    {
-                        id: 'cabinet-1',
-                        name: 'Kabinet Multifungsi',
-                        type: 'cabinet',
-                        width: 110,
-                        height: 160,
-                        color: '#00b894',
-                        icon: 'fas fa-archive',
-                        price: 'Rp 5.100.000',
-                        materials: ['Particle Board', 'HPL Anti Gores']
-                    }
+                    { id: 'cabinet', name: 'Kabinet', type: 'cabinet', width: 110, height: 160, color: '#00b894', icon: 'fas fa-archive', price: 'Rp 5.1jt' }
                 ]
             }
         ];
@@ -141,113 +89,140 @@ class HintInteriorPlanner {
         container.innerHTML = '';
 
         this.catalogData.forEach(category => {
-            const categoryDiv = document.createElement('div');
-            categoryDiv.className = 'catalog-category';
-
-            categoryDiv.innerHTML = `<div class="category-title">${category.category}</div>`;
+            const catDiv = document.createElement('div');
+            catDiv.className = 'catalog-category';
+            catDiv.innerHTML = `<div class="category-title">${category.category}</div>`;
 
             category.items.forEach(item => {
-                const catalogItem = document.createElement('div');
-                catalogItem.className = `catalog-item ${item.type}`;
-                catalogItem.draggable = true;
-                catalogItem.dataset.itemId = item.id;
-                catalogItem.innerHTML = `
-                    <div class="item-preview">
-                        <i class="${item.icon}"></i>
-                    </div>
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `catalog-item ${item.type}`;
+                itemDiv.draggable = true;
+                itemDiv.dataset.itemData = JSON.stringify(item);
+                itemDiv.innerHTML = `
+                    <div class="item-preview"><i class="${item.icon}"></i></div>
                     <div class="item-info">
                         <h4>${item.name}</h4>
                         <p>${item.price}</p>
                     </div>
                 `;
-                catalogItem.addEventListener('dragstart', (e) => this.handleDragStart(e, item));
-                catalogItem.addEventListener('click', () => this.addFurniture(item));
-                categoryDiv.appendChild(catalogItem);
+                
+                itemDiv.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', itemDiv.dataset.itemData);
+                });
+                
+                itemDiv.addEventListener('click', () => this.quickAddFurniture(item));
+                
+                catDiv.appendChild(itemDiv);
             });
-
-            container.appendChild(categoryDiv);
+            
+            container.appendChild(catDiv);
         });
     }
 
+    quickAddFurniture(itemData) {
+        const newItem = {
+            ...itemData,
+            id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            x: this.roomX + 50 + Math.random() * 200,
+            y: this.roomY + 50 + Math.random() * 150
+        };
+        
+        this.furnitureItems.push(newItem);
+        this.selectedItem = newItem;
+        this.updateUI();
+        this.render();
+    }
+
     bindEvents() {
-        // Window resize
-        window.addEventListener('resize', () => this.setupCanvas());
-
         // Canvas events
-        this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
-        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
-        this.canvas.addEventListener('mouseup', () => this.handleMouseUp());
-        this.canvas.addEventListener('mouseleave', () => this.handleMouseUp());
+        this.canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
+        this.canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        this.canvas.addEventListener('mouseup', () => this.onMouseUp());
+        this.canvas.addEventListener('wheel', (e) => this.onWheel(e));
 
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            this.filterCatalog(e.target.value);
-        });
+        // Drag & Drop
+        this.canvas.addEventListener('dragover', (e) => e.preventDefault());
+        this.canvas.addEventListener('drop', (e) => this.onDrop(e));
 
-        // UI Buttons
+        // UI Events
+        document.getElementById('searchInput').addEventListener('input', (e) => this.filterCatalog(e.target.value));
         document.getElementById('sidebarToggle').addEventListener('click', () => {
             document.getElementById('sidebar').classList.toggle('collapsed');
         });
 
+        // Button events
         document.getElementById('resetBtn').addEventListener('click', () => this.resetRoom());
         document.getElementById('saveBtn').addEventListener('click', () => this.saveProject());
-        document.getElementById('exportBtn').addEventListener('click', () => this.exportProject());
-        document.getElementById('panelClose').addEventListener('click', () => {
-            document.getElementById('propertiesPanel').classList.remove('active');
+        
+        // Window resize
+        window.addEventListener('resize', () => {
+            this.setupCanvas();
+            this.render();
         });
 
-        // Keyboard shortcuts
+        // Keyboard
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Delete' && this.selectedItem) {
-                this.deleteSelectedItem();
-            }
-            if (e.key === 'z' && e.ctrlKey) {
-                this.undo();
+                this.deleteItem(this.selectedItem);
             }
         });
     }
 
-    handleDragStart(e, itemData) {
-        e.dataTransfer.setData('application/json', JSON.stringify(itemData));
-    }
-
-    handleMouseDown(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Check if clicking on furniture
-        this.selectedItem = this.getItemAt(x, y);
+    onMouseDown(e) {
+        const pos = this.getMousePos(e);
+        this.selectedItem = this.getItemAtPos(pos.x, pos.y);
+        
         if (this.selectedItem) {
             this.isDragging = true;
-            this.dragOffset.x = x - this.selectedItem.x;
-            this.dragOffset.y = y - this.selectedItem.y;
-            this.updatePropertiesPanel(this.selectedItem);
-            document.getElementById('propertiesPanel').classList.add('active');
-            this.saveHistory();
+            this.dragOffset = {
+                x: pos.x - this.selectedItem.x,
+                y: pos.y - this.selectedItem.y
+            };
         }
     }
 
-    handleMouseMove(e) {
+    onMouseMove(e) {
         if (!this.isDragging || !this.selectedItem) return;
-
-        const rect = this.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        // Snap to grid
-        this.selectedItem.x = Math.round((x - this.dragOffset.x) / this.gridSize) * this.gridSize;
-        this.selectedItem.y = Math.round((y - this.dragOffset.y) / this.gridSize) * this.gridSize;
-
-        this.selectedItem.x = Math.max(10, Math.min(this.roomWidth - this.selectedItem.width - 10, this.selectedItem.x));
-        this.selectedItem.y = Math.max(10, Math.min(this.roomHeight - this.selectedItem.height - 10, this.selectedItem.y));
+        
+        const pos = this.getMousePos(e);
+        this.selectedItem.x = Math.round((pos.x - this.dragOffset.x) / this.gridSize) * this.gridSize;
+        this.selectedItem.y = Math.round((pos.y - this.dragOffset.y) / this.gridSize) * this.gridSize;
+        
+        this.clampItem(this.selectedItem);
+        this.render();
     }
 
-    handleMouseUp() {
+    onMouseUp() {
         this.isDragging = false;
     }
 
-    getItemAt(x, y) {
+    onWheel(e) {
+        e.preventDefault();
+        if (this.selectedItem) {
+            this.selectedItem.rotation += e.deltaY > 0 ? 15 : -15;
+            this.render();
+        }
+    }
+
+    onDrop(e) {
+        e.preventDefault();
+        try {
+            const itemData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            this.quickAddFurniture(itemData);
+        } catch (err) {
+            console.log('Drop failed:', err);
+        }
+    }
+
+    getMousePos(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    getItemAtPos(x, y) {
         for (let i = this.furnitureItems.length - 1; i >= 0; i--) {
             const item = this.furnitureItems[i];
             if (x >= item.x && x <= item.x + item.width &&
@@ -258,165 +233,71 @@ class HintInteriorPlanner {
         return null;
     }
 
-    addFurniture(itemData) {
-        const newItem = {
-            id: `item_${Date.now()}`,
-            ...itemData,
-            x: 100 + Math.random() * 200,
-            y: 100 + Math.random() * 150,
-            rotation: 0,
-            layer: 0
-        };
-
-        // Snap to grid
-        newItem.x = Math.round(newItem.x / this.gridSize) * this.gridSize;
-        newItem.y = Math.round(newItem.y / this.gridSize) * this.gridSize;
-
-        this.furnitureItems.push(newItem);
-        this.selectedItem = newItem;
-        this.updatePropertiesPanel(newItem);
-        document.getElementById('propertiesPanel').classList.add('active');
-        this.updateUI();
-        this.saveHistory();
-        this.render();
+    clampItem(item) {
+        item.x = Math.max(this.roomX + 10, Math.min(this.roomX + this.roomWidth - item.width - 10, item.x));
+        item.y = Math.max(this.roomY + 10, Math.min(this.roomY + this.roomHeight - item.height - 10, item.y));
     }
 
-    updatePropertiesPanel(item) {
-        const container = document.getElementById('propSections');
-        container.innerHTML = `
-            <div class="prop-group">
-                <label class="prop-label">
-                    <i class="fas fa-ruler-horizontal"></i> Lebar
-                </label>
-                <div class="range-group">
-                    <input type="range" class="prop-control range-slider" min="50" max="400" value="${item.width}">
-                    <span class="range-value">${item.width}px</span>
-                </div>
-            </div>
-            <div class="prop-group">
-                <label class="prop-label">
-                    <i class="fas fa-ruler-vertical"></i> Tinggi
-                </label>
-                <div class="range-group">
-                    <input type="range" class="prop-control range-slider" min="50" max="500" value="${item.height}">
-                    <span class="range-value">${item.height}px</span>
-                </div>
-            </div>
-            <div class="prop-group">
-                <label class="prop-label">
-                    <i class="fas fa-palette"></i> Warna
-                </label>
-                <div class="color-group">
-                    <input type="color" class="prop-control color-picker" value="${item.color}">
-                    <div class="color-presets">
-                        <div class="color-preset" style="background: #ff6b6b" data-color="#ff6b6b"></div>
-                        <div class="color-preset" style="background: #4ecdc4" data-color="#4ecdc4"></div>
-                        <div class="color-preset" style="background: #45b7d1" data-color="#45b7d1"></div>
-                        <div class="color-preset" style="background: #f9ca24" data-color="#f9ca24"></div>
-                        <div class="color-preset" style="background: #6c5ce7" data-color="#6c5ce7"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="prop-group">
-                <label class="prop-label">
-                    <i class="fas fa-layer-group"></i> Material
-                </label>
-                <select class="prop-control">
-                    ${item.materials.map(material => `<option>${material}</option>`).join('')}
-                </select>
-            </div>
-        `;
-
-        // Bind property controls
-        container.querySelectorAll('.range-slider').forEach((slider, index) => {
-            slider.addEventListener('input', (e) => {
-                const value = parseInt(e.target.value);
-                if (index === 0) {
-                    item.width = value;
-                } else {
-                    item.height = value;
-                }
-                container.querySelectorAll('.range-value')[index].textContent = value + 'px';
-                this.render();
-            });
-        });
-
-        container.querySelector('.color-picker').addEventListener('change', (e) => {
-            item.color = e.target.value;
-            this.render();
-        });
-
-        container.querySelectorAll('.color-preset').forEach(preset => {
-            preset.addEventListener('click', (e) => {
-                item.color = e.currentTarget.dataset.color;
-                container.querySelector('.color-picker').value = item.color;
-                document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
-                e.currentTarget.classList.add('active');
-                this.render();
-            });
+    filterCatalog(query) {
+        const items = document.querySelectorAll('.catalog-item');
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(query.toLowerCase()) ? 'flex' : 'none';
         });
     }
 
     render() {
-        // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Draw room background
+        // Draw room
         this.drawRoom();
-
-        // Draw grid
         this.drawGrid();
 
-        // Draw furniture items
-        this.furnitureItems.forEach(item => {
-            this.drawFurnitureItem(item);
-        });
+        // Draw items
+        this.furnitureItems.forEach(item => this.drawItem(item));
 
-        // Draw selection highlight
+        // Draw selection
         if (this.selectedItem) {
-            this.drawSelectionHighlight(this.selectedItem);
+            this.drawSelection(this.selectedItem);
         }
 
         this.updateUI();
     }
 
     drawRoom() {
-        const gradient = this.ctx.createLinearGradient(this.roomX, this.roomY, this.roomX + this.roomWidth, this.roomY + this.roomHeight);
+        // Room gradient
+        const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
         gradient.addColorStop(0, '#ffffff');
-        gradient.addColorStop(1, '#f8fafc');
+        gradient.addColorStop(1, '#f0f4f8');
 
         this.ctx.fillStyle = gradient;
-        this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
-        this.ctx.shadowBlur = 20;
-        this.ctx.shadowOffsetY = 10;
-        this.ctx.fillRect(this.roomX, this.roomY, this.roomWidth, this.roomHeight);
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        // Room border
+        // Room frame
+        this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
+        this.ctx.shadowBlur = 25;
+        this.ctx.shadowOffsetY = 15;
+        
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(this.roomX - 10, this.roomY - 10, this.roomWidth + 20, this.roomHeight + 20);
+
         this.ctx.shadowBlur = 0;
-        this.ctx.lineWidth = 4;
-        this.ctx.strokeStyle = '#e2e8f0';
+        this.ctx.strokeStyle = '#e1e8ed';
+        this.ctx.lineWidth = 3;
         this.ctx.strokeRect(this.roomX, this.roomY, this.roomWidth, this.roomHeight);
-
-        // Room shadow
-        this.ctx.shadowColor = 'rgba(0,0,0,0.1)';
-        this.ctx.shadowBlur = 15;
-        this.ctx.shadowOffsetX = 5;
-        this.ctx.shadowOffsetY = 5;
-        this.ctx.fillStyle = 'rgba(0,0,0,0.05)';
-        this.ctx.fillRect(this.roomX + 5, this.roomY + 5, this.roomWidth, this.roomHeight);
     }
 
     drawGrid() {
-        this.ctx.strokeStyle = 'rgba(0,0,0,0.03)';
+        this.ctx.strokeStyle = 'rgba(200,210,220,0.5)';
         this.ctx.lineWidth = 1;
-
+        
         for (let x = this.roomX; x < this.roomX + this.roomWidth; x += this.gridSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, this.roomY);
             this.ctx.lineTo(x, this.roomY + this.roomHeight);
             this.ctx.stroke();
         }
-
+        
         for (let y = this.roomY; y < this.roomY + this.roomHeight; y += this.gridSize) {
             this.ctx.beginPath();
             this.ctx.moveTo(this.roomX, y);
@@ -425,65 +306,139 @@ class HintInteriorPlanner {
         }
     }
 
-    drawFurnitureItem(item) {
+    drawItem(item) {
         this.ctx.save();
         this.ctx.translate(item.x + item.width/2, item.y + item.height/2);
-        this.ctx.rotate(item.rotation * Math.PI / 180);
+        this.ctx.rotate((item.rotation || 0) * Math.PI / 180);
 
-        // Item gradient
-        const gradient = this.ctx.createLinearGradient(-item.width/2, -item.height/2, item.width/2, item.height/2);
+        // Shadow
+        this.ctx.shadowColor = 'rgba(0,0,0,0.15)';
+        this.ctx.shadowBlur = 12;
+        this.ctx.shadowOffsetX = 4;
+        this.ctx.shadowOffsetY = 6;
+
+        // Gradient
+        const gradient = this.ctx.createLinearGradient(0, -item.height/2, 0, item.height/2);
         gradient.addColorStop(0, item.color);
-        gradient.addColorStop(1, this.adjustBrightness(item.color, -20));
+        gradient.addColorStop(0.7, this.lightenColor(item.color, 20));
+        gradient.addColorStop(1, item.color);
 
         this.ctx.fillStyle = gradient;
-        this.ctx.shadowColor = item.color;
-        this.ctx.shadowBlur = 15;
-        this.ctx.shadowOffsetX = 5;
-        this.ctx.shadowOffsetY = 5;
-
-        // Main shape with rounded corners
         this.ctx.roundRect(-item.width/2, -item.height/2, item.width, item.height, 12);
         this.ctx.fill();
 
         // Highlight
         this.ctx.shadowBlur = 0;
-        this.ctx.fillStyle = 'rgba(255,255,255,0.3)';
-        this.ctx.fillRect(-item.width/2 + 4, -item.height/2 + 4, item.width - 8, 8);
+        this.ctx.fillStyle = 'rgba(255,255,255,0.4)';
+        this.ctx.fillRect(-item.width/2 + 6, -item.height/2 + 6, item.width - 12, 12);
 
-        // Item label
-        this.ctx.shadowColor = 'rgba(0,0,0,0.5)';
-        this.ctx.shadowBlur = 4;
+        // Text
         this.ctx.fillStyle = 'white';
-        this.ctx.font = 'bold 14px Inter';
+        this.ctx.font = 'bold 13px Inter, sans-serif';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillText(item.name.split(' ')[0], 0, -item.height/2 + 25);
+        this.ctx.shadowColor = 'rgba(0,0,0,0.3)';
+        this.ctx.shadowBlur = 3;
+        this.ctx.fillText(item.name.split(' ')[0], 0, item.height/2 - 25);
 
         this.ctx.restore();
     }
 
-    drawSelectionHighlight(item) {
+    drawSelection(item) {
         this.ctx.save();
         this.ctx.translate(item.x + item.width/2, item.y + item.height/2);
-        this.ctx.rotate(item.rotation * Math.PI / 180);
+        this.ctx.rotate((item.rotation || 0) * Math.PI / 180);
 
-        this.ctx.shadowColor = '#667eea';
-        this.ctx.shadowBlur = 10;
+        // Selection border
+        this.ctx.shadowColor = '#4facfe';
+        this.ctx.shadowBlur = 15;
         this.ctx.lineWidth = 3;
-        this.ctx.strokeStyle = '#667eea';
-        this.ctx.setLineDash([8, 8]);
-        this.ctx.strokeRect(-item.width/2 - 4, -item.height/2 - 4, item.width + 8, item.height + 8);
+        this.ctx.strokeStyle = '#4facfe';
+        this.ctx.setLineDash([10, 5]);
+        this.ctx.strokeRect(-item.width/2 - 6, -item.height/2 - 6, item.width + 12, item.height + 12);
 
-        // Resize handles
-        const handleSize = 8;
+        // Handles
+        const handleSize = 10;
+        this.ctx.fillStyle = '#4facfe';
+        this.ctx.shadowBlur = 8;
+        this.ctx.shadowColor = '#4facfe';
+        
+        // 4 corner handles
         const handles = [
-            {x: -item.width/2, y: -item.height/2}, // top-left
-            {x: item.width/2, y: -item.height/2},   // top-right
-            {x: item.width/2, y: item.height/2},     // bottom-right
-            {x: -item.width/2, y: item.height/2}     // bottom-left
+            [-item.width/2, -item.height/2],
+            [item.width/2, -item.height/2],
+            [item.width/2, item.height/2],
+            [-item.width/2, item.height/2]
         ];
+        
+        handles.forEach(([hx, hy]) => {
+            this.ctx.beginPath();
+            this.ctx.arc(hx, hy, handleSize/2, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
 
-        handles.forEach(handle => {
-            this.ctx.fillStyle = '#667eea';
-            this.ctx.shadowBlur = 8;
-           
+        this.ctx.restore();
+    }
+
+    lightenColor(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+            (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+            (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+
+    updateUI() {
+        document.getElementById('projectTitle').textContent = `Ruang Tamu - ${this.furnitureItems.length} Items`;
+        document.getElementById('itemCount').textContent = `${this.furnitureItems.length} items`;
+    }
+
+    resetRoom() {
+        if (confirm('Reset semua furnitur?')) {
+            this.furnitureItems = [];
+            this.selectedItem = null;
+            this.render();
+        }
+    }
+
+    deleteItem(item) {
+        this.furnitureItems = this.furnitureItems.filter(i => i !== item);
+        this.selectedItem = null;
+        document.getElementById('propertiesPanel').classList.remove('active');
+        this.render();
+    }
+
+    saveProject() {
+        const data = {
+            furniture: this.furnitureItems,
+            timestamp: new Date().toISOString()
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `hint-interior-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Animation loop
+    animate() {
+        if (!this.isLoaded) return;
+        requestAnimationFrame(() => this.animate());
+        this.render();
+    }
+}
+
+// Initialize app when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    planner = new HintInteriorPlanner();
+    planner.animate();
+});
+
+// Global functions for buttons
+function resetRoom() { planner.resetRoom(); }
+function saveProject() { planner.saveProject(); }
