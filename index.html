@@ -12,30 +12,20 @@ body {
   padding: 40px;
 }
 
-/* GRID */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
-/* CARD */
 .product-card {
   background: #fff;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #ddd;
-  transition: 0.3s;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-/* GAMBAR */
 .product-img {
-  position: relative;
   height: 200px;
   background: #EDE0CC;
 }
@@ -46,38 +36,18 @@ body {
   object-fit: cover;
 }
 
-/* BADGE */
-.product-badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #B8722A;
-  color: #fff;
-  font-size: 10px;
-  padding: 4px 8px;
-  border-radius: 4px;
-}
-
-/* INFO */
 .product-info {
   padding: 15px;
 }
 
 .product-name {
   font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.product-desc {
-  font-size: 13px;
-  color: #666;
 }
 
 .product-price {
-  font-weight: bold;
   margin-top: 10px;
+  font-weight: bold;
 }
-
 </style>
 </head>
 
@@ -85,51 +55,42 @@ body {
 
 <div class="product-grid">
 
-  <!-- LEMARI -->
   <div class="product-card">
     <div class="product-img">
-      <span class="product-badge">Baru</span>
-      <img src="img/lemari-2-pintu.jpg" alt="Lemari 2 Pintu">
+      <img src="furnitur/lemari-2-pintu.jpg">
     </div>
     <div class="product-info">
       <div class="product-name">Lemari 2 Pintu</div>
-      <div class="product-desc">Kayu solid, 4 rak + gantungan.</div>
       <div class="product-price">Rp 4.299.000</div>
     </div>
   </div>
 
-  <!-- RAK BUKU -->
   <div class="product-card">
     <div class="product-img">
-      <img src="img/rak-buku.jpg" alt="Rak Buku">
+      <img src="furnitur/rak-buku.jpg">
     </div>
     <div class="product-info">
       <div class="product-name">Rak Buku</div>
-      <div class="product-desc">Minimalis, cocok untuk ruang kerja.</div>
       <div class="product-price">Rp 1.499.000</div>
     </div>
   </div>
 
-  <!-- SOFA -->
   <div class="product-card">
     <div class="product-img">
-      <img src="img/sofa-modular.jpg" alt="Sofa Modular">
+      <img src="furnitur/sofa-modular.jpg">
     </div>
     <div class="product-info">
       <div class="product-name">Sofa Modular</div>
-      <div class="product-desc">Nyaman & bisa disusun ulang.</div>
       <div class="product-price">Rp 6.999.000</div>
     </div>
   </div>
 
-  <!-- MEJA -->
   <div class="product-card">
     <div class="product-img">
-      <img src="img/meja-kerja.jpg" alt="Meja Kerja">
+      <img src="furnitur/meja-kerja.jpg">
     </div>
     <div class="product-info">
       <div class="product-name">Meja Kerja</div>
-      <div class="product-desc">Desain ergonomis & modern.</div>
       <div class="product-price">Rp 2.199.000</div>
     </div>
   </div>
