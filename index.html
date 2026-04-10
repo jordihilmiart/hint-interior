@@ -1,102 +1,2096 @@
-<img src="furnitur/lemari-2-pintu.jpg" width="200">
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Katalog Furniture</title>
-
+<title>Hint Interior — Desain Furnitur Custom</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f5f5f5;
-  padding: 40px;
+:root {
+  --cream: #F5F0E8;
+  --cream-dark: #EDE6D6;
+  --sand: #D4C5A9;
+  --warm-gray: #8C8070;
+  --charcoal: #2C2820;
+  --charcoal-light: #3D3830;
+  --accent: #B8722A;
+  --accent-light: #D4924A;
+  --accent-pale: #F0E0C8;
+  --white: #FDFAF5;
+  --green: #4A6741;
+  --green-light: #E8EFE6;
+  --text-primary: #2C2820;
+  --text-secondary: #6B6058;
+  --text-muted: #9C9088;
+  --border: rgba(44,40,32,0.12);
+  --shadow-sm: 0 2px 8px rgba(44,40,32,0.08);
+  --shadow-md: 0 8px 32px rgba(44,40,32,0.12);
+  --shadow-lg: 0 20px 60px rgba(44,40,32,0.16);
+  --radius: 4px;
+  --radius-lg: 12px;
 }
 
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 3px; }
+
+/* ─── TOP NAV ─── */
+.topnav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: var(--charcoal);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.topnav-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+.topnav-logo .logo-mark {
+  width: 32px; height: 32px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 3px;
+}
+.topnav-logo .logo-mark svg { width: 18px; height: 18px; fill: white; }
+.topnav-logo .logo-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px; color: var(--white); letter-spacing: -0.3px;
+}
+.topnav-logo .logo-sub {
+  font-size: 9px; color: var(--sand); letter-spacing: 2px;
+  text-transform: uppercase; margin-top: -3px; display: block;
+}
+
+.topnav-tabs {
+  display: flex; gap: 0;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px; padding: 3px;
+}
+.tab-btn {
+  padding: 7px 20px; border: none; background: transparent;
+  color: rgba(255,255,255,0.5); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  border-radius: 4px; transition: all 0.2s; white-space: nowrap;
+}
+.tab-btn.active {
+  background: var(--accent); color: white;
+}
+.tab-btn:hover:not(.active) { color: rgba(255,255,255,0.85); }
+
+.topnav-actions {
+  display: flex; align-items: center; gap: 12px;
+}
+.btn-nav {
+  padding: 7px 16px; border-radius: 4px; font-size: 12px;
+  font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s; letter-spacing: 0.2px;
+}
+.btn-outline {
+  background: transparent; border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.75);
+}
+.btn-outline:hover { border-color: rgba(255,255,255,0.5); color: white; }
+.btn-accent { background: var(--accent); border: 1px solid var(--accent); color: white; }
+.btn-accent:hover { background: var(--accent-light); }
+.cart-icon {
+  width: 36px; height: 36px; border-radius: 4px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  position: relative; transition: all 0.2s;
+}
+.cart-icon:hover { background: rgba(255,255,255,0.14); }
+.cart-icon svg { width: 16px; height: 16px; stroke: rgba(255,255,255,0.75); fill: none; }
+.cart-badge {
+  position: absolute; top: -5px; right: -5px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent); color: white;
+  font-size: 9px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ─── PAGES ─── */
+.page { display: none; padding-top: 56px; min-height: 100vh; }
+.page.active { display: block; }
+
+/* ══════════════════════════════════════════
+   DASHBOARD PAGE
+═══════════════════════════════════════════ */
+
+/* HERO */
+.hero {
+  background: var(--charcoal);
+  padding: 5rem 2rem 4rem;
+  display: grid; grid-template-columns: 1fr 480px;
+  gap: 4rem; align-items: center;
+  max-width: 1320px; margin: 0 auto;
+  min-height: calc(100vh - 56px);
+}
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.hero-eyebrow span {
+  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--accent-light); font-weight: 500;
+}
+.hero-eyebrow::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, rgba(184,114,42,0.4), transparent);
+}
+.hero-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(42px, 5vw, 72px);
+  line-height: 1.05; color: var(--white);
+  margin-bottom: 1.5rem; letter-spacing: -1px;
+}
+.hero-title em { font-style: italic; color: var(--accent-light); }
+.hero-desc {
+  font-size: 16px; line-height: 1.8;
+  color: rgba(255,255,255,0.55); max-width: 480px;
+  margin-bottom: 2.5rem;
+}
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-primary {
+  padding: 14px 32px; background: var(--accent); color: white;
+  border: none; border-radius: 4px; font-size: 14px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif;
+  transition: all 0.25s; letter-spacing: 0.3px;
+}
+.btn-primary:hover { background: var(--accent-light); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(184,114,42,0.35); }
+.btn-ghost {
+  padding: 14px 32px; background: transparent; color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; transition: all 0.25s;
+}
+.btn-ghost:hover { border-color: rgba(255,255,255,0.5); color: white; }
+
+.hero-stats {
+  display: flex; gap: 2.5rem; margin-top: 3rem;
+  padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.08);
+}
+.stat-item {}
+.stat-num {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; color: var(--white);
+}
+.stat-label { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+
+/* Hero 3D Room Mockup */
+.hero-visual {
+  position: relative;
+}
+.room-canvas {
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--charcoal-light);
+  border-radius: 12px; overflow: hidden;
+  position: relative; border: 1px solid rgba(255,255,255,0.06);
+}
+.room-wall-left {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 35%;
+  background: linear-gradient(135deg, #3A3228 0%, #2C2420 100%);
+}
+.room-floor {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 38%;
+  background: linear-gradient(180deg, #4A3E32 0%, #3A3028 100%);
+}
+.room-back {
+  position: absolute; right: 0; top: 0;
+  width: 65%; height: 62%;
+  background: linear-gradient(180deg, #2E2822 0%, #382E24 100%);
+}
+/* Furniture in room */
+.furniture-wardrobe {
+  position: absolute; bottom: 38%; left: 8%;
+  width: 26%; height: 55%;
+  background: linear-gradient(180deg, #8B6E4E 0%, #6B5238 100%);
+  border-radius: 2px 2px 0 0;
+}
+.wardrobe-door {
+  position: absolute; top: 8%; width: 44%; height: 82%;
+  background: rgba(0,0,0,0.1); border: 1px solid rgba(255,255,255,0.08);
+}
+.wardrobe-door:first-child { left: 4%; }
+.wardrobe-door:last-child { right: 4%; }
+.wardrobe-handle {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: rgba(255,255,255,0.3); border-radius: 2px;
+}
+
+.furniture-shelf {
+  position: absolute; bottom: 38%; right: 5%;
+  width: 20%; height: 44%;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.shelf-plank {
+  flex: 1; background: linear-gradient(180deg, #9A8060 0%, #7A6448 100%);
+  border-radius: 1px;
+}
+
+.furniture-bed {
+  position: absolute; bottom: 38%; left: 40%; right: 27%;
+  height: 28%;
+  background: linear-gradient(180deg, #6B5240 0%, #5A4433 100%);
+  border-radius: 2px 2px 0 0;
+}
+.bed-pillow {
+  position: absolute; top: 8px; width: 28%; height: 40%;
+  background: rgba(245,240,232,0.15); border-radius: 3px;
+}
+.bed-pillow:first-child { left: 8px; }
+.bed-pillow:last-child { right: 8px; }
+
+/* Dimension tag overlay */
+.dim-tag {
+  position: absolute; background: var(--accent);
+  color: white; font-size: 9px; font-weight: 600;
+  padding: 3px 8px; border-radius: 20px;
+  white-space: nowrap; z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ─── SECTION WRAPPER ─── */
+.section-wrap {
+  max-width: 1320px; margin: 0 auto;
+  padding: 4rem 2rem;
+}
+.section-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 2.5rem;
+}
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px; color: var(--charcoal); line-height: 1.2;
+}
+.section-sub { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+.section-link {
+  font-size: 13px; color: var(--accent); font-weight: 500;
+  text-decoration: none; display: flex; align-items: center; gap: 4px;
+  padding-bottom: 2px; border-bottom: 1px solid var(--accent);
+  transition: opacity 0.2s;
+}
+.section-link:hover { opacity: 0.7; }
+
+/* ─── CATEGORY TABS ─── */
+.category-tabs {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  position: sticky; top: 56px; z-index: 100;
+}
+.category-tabs-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: flex; gap: 0; padding: 0 2rem;
+  overflow-x: auto; scrollbar-width: none;
+}
+.category-tabs-inner::-webkit-scrollbar { display: none; }
+.cat-tab {
+  padding: 16px 20px; border: none; background: transparent;
+  font-family: 'DM Sans', sans-serif; font-size: 13px;
+  color: var(--text-secondary); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+  font-weight: 500; letter-spacing: 0.2px;
+}
+.cat-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.cat-tab:hover:not(.active) { color: var(--text-primary); }
+
+/* ─── PRODUCT GRID ─── */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 20px;
 }
 
 .product-card {
-  background: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #ddd;
+  background: var(--white); border-radius: 8px;
+  overflow: hidden; cursor: pointer;
+  transition: all 0.3s; position: relative;
+  border: 1px solid var(--border);
+}
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+  border-color: rgba(184,114,42,0.2);
 }
 
 .product-img {
-  height: 200px;
-  background: #EDE0CC;
+  width: 100%; aspect-ratio: 4/3;
+  background: var(--cream-dark);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.product-img-svg { width: 80%; height: 80%; }
+
+.product-badge {
+  position: absolute; top: 12px; left: 12px;
+  font-size: 10px; font-weight: 600; letter-spacing: 1px;
+  text-transform: uppercase; padding: 4px 10px; border-radius: 3px;
+}
+.badge-new { background: var(--accent); color: white; }
+.badge-popular { background: var(--green); color: white; }
+.badge-sale { background: #C0392B; color: white; }
+
+.product-wish {
+  position: absolute; top: 10px; right: 10px;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: white; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.2s; opacity: 0;
+}
+.product-card:hover .product-wish { opacity: 1; }
+.product-wish:hover { background: var(--accent-pale); border-color: var(--accent); }
+.product-wish svg { width: 14px; height: 14px; stroke: var(--text-muted); fill: none; }
+
+.product-info { padding: 16px 18px 18px; }
+.product-series { font-size: 11px; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+.product-name { font-size: 16px; font-weight: 600; margin: 4px 0 6px; color: var(--charcoal); }
+.product-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+.product-variants {
+  display: flex; gap: 6px; margin-top: 10px;
+}
+.variant-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid transparent; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.variant-dot.selected, .variant-dot:hover { border-color: var(--charcoal); }
+.product-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: 12px; padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.product-price { font-size: 17px; font-weight: 600; color: var(--charcoal); }
+.product-price-old { font-size: 12px; color: var(--text-muted); text-decoration: line-through; display: block; }
+.btn-add-cart {
+  padding: 8px 16px; background: var(--charcoal); color: white;
+  border: none; border-radius: 4px; font-size: 12px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.btn-add-cart:hover { background: var(--accent); }
+.btn-customize {
+  padding: 8px 16px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 4px; font-size: 12px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.btn-customize:hover { background: var(--accent); color: white; }
+
+/* ─── FILTER SIDEBAR (in catalog) ─── */
+.catalog-layout {
+  display: grid; grid-template-columns: 260px 1fr;
+  gap: 2rem; padding: 2rem; max-width: 1320px; margin: 0 auto;
+}
+.filter-panel {
+  background: var(--white); border-radius: 8px;
+  border: 1px solid var(--border); padding: 1.5rem;
+  height: fit-content; position: sticky; top: 110px;
+}
+.filter-title {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600; margin-bottom: 1.2rem;
+}
+.filter-section { margin-bottom: 1.5rem; }
+.filter-section-label {
+  font-size: 13px; font-weight: 600; color: var(--charcoal);
+  margin-bottom: 0.8rem; display: flex; align-items: center;
+  justify-content: space-between; cursor: pointer;
+}
+.filter-options { display: flex; flex-direction: column; gap: 6px; }
+.filter-option {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-secondary); cursor: pointer;
+}
+.filter-option input[type="checkbox"] {
+  width: 15px; height: 15px; cursor: pointer;
+  accent-color: var(--accent);
+}
+.filter-color-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.color-swatch {
+  width: 28px; height: 28px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent;
+  transition: border-color 0.15s;
+}
+.color-swatch.active, .color-swatch:hover { border-color: var(--charcoal); }
+.price-range { margin-top: 8px; }
+.price-range input[type="range"] {
+  width: 100%; accent-color: var(--accent);
+}
+.price-range-labels {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+}
+.filter-divider { height: 1px; background: var(--border); margin: 1rem 0; }
+.btn-apply-filter {
+  width: 100%; padding: 10px; background: var(--charcoal); color: white;
+  border: none; border-radius: 4px; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.btn-apply-filter:hover { background: var(--accent); }
+
+.catalog-right {}
+.catalog-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+.catalog-count { font-size: 13px; color: var(--text-secondary); }
+.sort-select {
+  padding: 8px 12px; background: var(--white); border: 1px solid var(--border);
+  border-radius: 4px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--charcoal); cursor: pointer;
 }
 
-.product-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* ─── INSPIRATION SECTION ─── */
+.inspiration-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: 300px 300px;
+  gap: 16px;
+}
+.inspo-card {
+  border-radius: 8px; overflow: hidden;
+  position: relative; cursor: pointer;
+  background: var(--charcoal-light);
+}
+.inspo-card:first-child { grid-row: 1 / 3; }
+.inspo-card:hover .inspo-overlay { opacity: 1; }
+.inspo-bg {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.inspo-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(44,40,32,0.85) 0%, transparent 50%);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.5rem; opacity: 0.7; transition: opacity 0.3s;
+}
+.inspo-label {
+  font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--sand); margin-bottom: 4px;
+}
+.inspo-title { font-family: 'DM Serif Display', serif; font-size: 22px; color: white; }
+.inspo-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+.inspo-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px; padding: 7px 14px; background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25); border-radius: 3px;
+  color: white; font-size: 12px; cursor: pointer;
+  transition: background 0.2s; width: fit-content;
+}
+.inspo-btn:hover { background: rgba(255,255,255,0.22); }
+
+/* ─── FEATURES BAR ─── */
+.features-bar {
+  background: var(--charcoal); padding: 3rem 2rem;
+}
+.features-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+}
+.feature-item { text-align: center; }
+.feature-icon {
+  width: 48px; height: 48px; margin: 0 auto 1rem;
+  background: rgba(184,114,42,0.15); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.feature-icon svg { width: 22px; height: 22px; stroke: var(--accent-light); fill: none; }
+.feature-title { font-size: 15px; font-weight: 500; color: white; margin-bottom: 4px; }
+.feature-desc { font-size: 12px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+
+/* ══════════════════════════════════════════
+   PLANNER PAGE
+═══════════════════════════════════════════ */
+.planner-layout {
+  display: grid; grid-template-columns: 320px 1fr 280px;
+  height: calc(100vh - 56px);
+  background: var(--cream);
 }
 
-.product-info {
-  padding: 15px;
+/* Left Panel */
+.planner-left {
+  background: var(--white);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.panel-header {
+  padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title { font-size: 14px; font-weight: 600; color: var(--charcoal); }
+.panel-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.panel-actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 28px; height: 28px; border-radius: 4px;
+  background: var(--cream-dark); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.icon-btn:hover { background: var(--sand); }
+.icon-btn svg { width: 14px; height: 14px; stroke: var(--text-secondary); fill: none; }
+
+/* Series selector */
+.series-tabs {
+  display: flex; padding: 0 1.5rem; gap: 0;
+  border-bottom: 1px solid var(--border); overflow-x: auto;
+}
+.series-tab {
+  padding: 12px 14px; font-size: 12px; font-weight: 500;
+  color: var(--text-muted); cursor: pointer; white-space: nowrap;
+  border-bottom: 2px solid transparent; transition: all 0.15s; border: none; background: none;
+  font-family: 'DM Sans', sans-serif;
+}
+.series-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Component list */
+.components-scroll {
+  flex: 1; overflow-y: auto; padding: 1rem 1.5rem;
+}
+.comp-group { margin-bottom: 1.2rem; }
+.comp-group-label {
+  font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600; margin-bottom: 8px;
+}
+.comp-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 6px;
+  border: 1px solid var(--border); margin-bottom: 6px;
+  cursor: grab; background: var(--white); transition: all 0.2s;
+}
+.comp-item:hover { border-color: var(--accent); background: var(--accent-pale); }
+.comp-item:active { cursor: grabbing; transform: scale(0.98); }
+.comp-thumb {
+  width: 44px; height: 44px; border-radius: 4px;
+  background: var(--cream-dark);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.comp-thumb svg { width: 28px; height: 28px; }
+.comp-info { flex: 1; min-width: 0; }
+.comp-name { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+.comp-size { font-size: 11px; color: var(--text-muted); }
+.comp-price { font-size: 12px; font-weight: 600; color: var(--accent); white-space: nowrap; }
+.comp-add {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--charcoal); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.comp-add:hover { background: var(--accent); }
+.comp-add svg { width: 12px; height: 12px; stroke: white; fill: none; }
+
+/* Middle Canvas */
+.planner-canvas {
+  position: relative; overflow: hidden;
+  background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
 }
 
-.product-name {
-  font-weight: bold;
+.canvas-toolbar {
+  position: absolute; top: 1rem; left: 50%; transform: translateX(-50%);
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 8px; display: flex; gap: 1px; padding: 4px;
+  box-shadow: var(--shadow-sm); z-index: 10;
+}
+.tool-btn {
+  padding: 7px 14px; border: none; background: transparent;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; color: var(--text-secondary);
+  border-radius: 5px; transition: all 0.15s; display: flex;
+  align-items: center; gap: 5px;
+}
+.tool-btn.active, .tool-btn:hover { background: var(--cream-dark); color: var(--charcoal); }
+.tool-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+
+.canvas-view-toggle {
+  position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--charcoal); border-radius: 30px;
+  display: flex; gap: 2px; padding: 4px;
+}
+.view-btn {
+  padding: 6px 18px; border: none; background: transparent;
+  font-size: 12px; color: rgba(255,255,255,0.5); cursor: pointer;
+  font-family: 'DM Sans', sans-serif; border-radius: 20px; transition: all 0.2s;
+}
+.view-btn.active { background: var(--accent); color: white; }
+
+/* Room render area */
+.room-render {
+  width: 680px; height: 500px;
+  background: linear-gradient(180deg, #E8E0D4 0%, #D4C8B8 100%);
+  border-radius: 12px; position: relative;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
 }
 
-.product-price {
-  margin-top: 10px;
-  font-weight: bold;
+/* Room floor */
+.render-floor {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 38%;
+  background: linear-gradient(180deg, #C8B89A 0%, #B8A888 100%);
 }
+/* Floor lines */
+.render-floor::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 80px
+  ), repeating-linear-gradient(
+    0deg, rgba(0,0,0,0.04) 0px, rgba(0,0,0,0.04) 1px, transparent 1px, transparent 80px
+  );
+}
+.render-back-wall {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 62%; background: #E4DDD2;
+}
+.render-left-wall {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 18%; 
+  background: linear-gradient(90deg, #D8D0C4 0%, #E0D8CC 100%);
+}
+
+/* Placed furniture items in render */
+.render-wardrobe {
+  position: absolute; bottom: 38%; left: 20%;
+  width: 200px; height: 260px;
+  display: flex; gap: 2px; align-items: stretch;
+}
+.render-module {
+  flex: 1; background: linear-gradient(180deg, #9C8060 0%, #8A7050 100%);
+  border-radius: 2px 2px 0 0; position: relative;
+}
+.render-module::before {
+  content: ''; position: absolute; top: 12px; left: 8px; right: 8px; bottom: 12px;
+  border: 1px solid rgba(0,0,0,0.1); border-radius: 2px;
+}
+.render-module-door-handle {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 24px; background: rgba(255,255,255,0.35); border-radius: 2px;
+}
+
+.render-shelf-unit {
+  position: absolute; bottom: 38%; right: 8%;
+  width: 120px; height: 200px;
+  background: linear-gradient(180deg, #A89070 0%, #907860 100%);
+  border-radius: 2px 2px 0 0;
+}
+.render-shelf-line {
+  position: absolute; left: 8px; right: 8px; height: 2px;
+  background: rgba(0,0,0,0.2);
+}
+
+/* Dimension overlay */
+.dim-line-h {
+  position: absolute; display: flex; align-items: center;
+  pointer-events: none;
+}
+.dim-line-h::before, .dim-line-h::after {
+  content: ''; flex: 1; height: 1px; background: var(--accent);
+}
+.dim-line-h span {
+  font-size: 10px; font-weight: 600; color: var(--accent);
+  padding: 2px 6px; background: white; border-radius: 10px;
+  margin: 0 4px; white-space: nowrap;
+}
+.dim-arrow {
+  position: absolute; font-size: 10px; font-weight: 600;
+  color: var(--accent); background: white;
+  border: 1px solid var(--accent); border-radius: 3px;
+  padding: 2px 6px;
+}
+
+/* Selection box */
+.selection-ring {
+  position: absolute; border: 2px solid var(--accent);
+  border-radius: 3px; pointer-events: none;
+  box-shadow: 0 0 0 4px rgba(184,114,42,0.15);
+}
+.selection-handle {
+  position: absolute; width: 8px; height: 8px;
+  background: var(--accent); border-radius: 50%; border: 2px solid white;
+}
+
+/* Grid overlay */
+.grid-overlay {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.grid-overlay.visible { opacity: 1; }
+
+.canvas-hint {
+  position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: var(--text-muted); white-space: nowrap;
+  pointer-events: none;
+  display: flex; align-items: center; gap: 6px;
+}
+.canvas-hint svg { width: 14px; height: 14px; stroke: var(--text-muted); fill: none; }
+
+/* Right Panel */
+.planner-right {
+  background: var(--white); border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+.config-section { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border); }
+.config-label {
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); font-weight: 600; margin-bottom: 10px;
+}
+.config-row {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+}
+.config-key { font-size: 13px; color: var(--text-secondary); }
+.config-val { font-size: 13px; font-weight: 500; color: var(--charcoal); }
+.config-select {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--charcoal); background: var(--cream); cursor: pointer;
+  margin-bottom: 8px;
+}
+.config-input {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+  color: var(--charcoal); background: var(--cream); margin-bottom: 8px;
+}
+
+.dimension-inputs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+.dim-input-wrap { }
+.dim-input-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+.dim-input {
+  width: 100%; padding: 7px 8px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 12px; font-family: 'DM Sans', sans-serif;
+  color: var(--charcoal); background: var(--cream); text-align: center;
+}
+.dim-input:focus { outline: none; border-color: var(--accent); }
+
+/* Color picker */
+.material-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.material-chip {
+  aspect-ratio: 1; border-radius: 6px; cursor: pointer;
+  border: 2px solid transparent; transition: border-color 0.15s;
+  position: relative; overflow: hidden;
+}
+.material-chip.selected { border-color: var(--accent); }
+.material-chip:hover { border-color: var(--charcoal); }
+.material-chip span {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  font-size: 9px; text-align: center; padding: 2px;
+  background: rgba(0,0,0,0.35); color: white;
+}
+
+/* Items list */
+.items-scroll { flex: 1; overflow-y: auto; padding: 1rem 1.5rem; }
+.item-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 10px; border-radius: 6px; margin-bottom: 6px;
+  background: var(--cream); border: 1px solid var(--border);
+}
+.item-row.selected { border-color: var(--accent); background: var(--accent-pale); }
+.item-num {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--charcoal); color: white;
+  font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.item-name { flex: 1; font-size: 12px; font-weight: 500; color: var(--charcoal); }
+.item-detail { font-size: 11px; color: var(--text-muted); }
+.item-price { font-size: 12px; font-weight: 600; color: var(--charcoal); }
+.item-delete {
+  width: 20px; height: 20px; border-radius: 3px; background: transparent;
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); transition: color 0.15s;
+}
+.item-delete:hover { color: #C0392B; }
+.item-delete svg { width: 12px; height: 12px; stroke: currentColor; fill: none; }
+
+/* Summary */
+.summary-panel { padding: 1.2rem 1.5rem; border-top: 1px solid var(--border); background: var(--cream); }
+.summary-row {
+  display: flex; justify-content: space-between;
+  font-size: 13px; margin-bottom: 6px; color: var(--text-secondary);
+}
+.summary-total {
+  display: flex; justify-content: space-between;
+  font-size: 16px; font-weight: 600; color: var(--charcoal);
+  padding-top: 8px; margin-top: 6px; border-top: 1px solid var(--border);
+}
+.btn-save-config {
+  width: 100%; padding: 12px; background: var(--charcoal); color: white;
+  border: none; border-radius: 4px; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 10px;
+}
+.btn-save-config:hover { background: var(--accent); }
+.btn-save-secondary {
+  width: 100%; padding: 10px; background: transparent; color: var(--text-secondary);
+  border: 1px solid var(--border); border-radius: 4px; font-size: 13px; font-weight: 500;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; margin-top: 6px;
+}
+.btn-save-secondary:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+/* ─── ROOM SIZE INDICATOR ─── */
+.room-size-bar {
+  position: absolute; bottom: 1.5rem; right: 1.5rem;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 11px; color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+}
+.room-size-bar strong { color: var(--charcoal); }
+
+/* ─── ZOOM CONTROLS ─── */
+.zoom-controls {
+  position: absolute; top: 1rem; right: 1rem;
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden; box-shadow: var(--shadow-sm);
+}
+.zoom-btn {
+  width: 32px; height: 32px; border: none; background: transparent;
+  cursor: pointer; font-size: 16px; color: var(--text-secondary);
+  transition: background 0.15s; display: flex; align-items: center; justify-content: center;
+}
+.zoom-btn:hover { background: var(--cream); }
+.zoom-divider { height: 1px; background: var(--border); }
+.zoom-level {
+  padding: 4px 6px; font-size: 10px; font-weight: 600;
+  color: var(--text-muted); text-align: center; letter-spacing: 0.5px;
+}
+
+/* ─── MODAL / DETAIL ─── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(44,40,32,0.6);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  backdrop-filter: blur(3px);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--white); border-radius: 12px;
+  width: 900px; max-width: calc(100vw - 3rem); max-height: 85vh;
+  overflow: auto; box-shadow: var(--shadow-lg);
+  transform: translateY(20px); transition: transform 0.3s;
+}
+.modal-overlay.open .modal-box { transform: translateY(0); }
+.modal-inner { display: grid; grid-template-columns: 1fr 1fr; }
+.modal-img-side {
+  background: var(--cream-dark); border-radius: 12px 0 0 12px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 2rem; min-height: 400px;
+}
+.modal-img-side svg { width: 100%; max-width: 280px; }
+.modal-info-side { padding: 2.5rem; }
+.modal-series { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+.modal-name { font-family: 'DM Serif Display', serif; font-size: 32px; margin: 6px 0 8px; }
+.modal-tagline { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem; }
+.modal-specs { margin-bottom: 1.5rem; }
+.modal-spec-row {
+  display: flex; justify-content: space-between;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.modal-spec-row:last-child { border-bottom: none; }
+.spec-key { color: var(--text-muted); }
+.spec-val { font-weight: 500; }
+.modal-price { font-size: 28px; font-weight: 600; color: var(--charcoal); margin-bottom: 1rem; }
+.modal-btns { display: flex; gap: 10px; }
+.modal-close {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(44,40,32,0.1); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: rgba(44,40,32,0.2); }
+.modal-close svg { width: 16px; height: 16px; stroke: var(--charcoal); fill: none; }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+  background: var(--charcoal); color: white;
+  padding: 12px 20px; border-radius: 6px;
+  font-size: 13px; display: flex; align-items: center; gap: 8px;
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s; box-shadow: var(--shadow-md);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast-icon { width: 18px; height: 18px; stroke: var(--accent-light); fill: none; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .catalog-layout { grid-template-columns: 1fr; }
+  .filter-panel { position: static; }
+  .planner-layout { grid-template-columns: 1fr; }
+  .planner-left, .planner-right { display: none; }
+  .inspiration-grid { grid-template-columns: 1fr 1fr; }
+  .inspo-card:first-child { grid-row: auto; grid-column: 1 / -1; }
+  .features-inner { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s ease forwards; }
+.fade-up-2 { animation: fadeUp 0.5s 0.1s ease forwards; opacity: 0; }
+.fade-up-3 { animation: fadeUp 0.5s 0.2s ease forwards; opacity: 0; }
+.fade-up-4 { animation: fadeUp 0.5s 0.3s ease forwards; opacity: 0; }
+
+/* ─── MISC ─── */
+.tag-chip {
+  display: inline-block; padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.3px;
+}
+.chip-warm { background: var(--accent-pale); color: var(--accent); }
+.chip-green { background: var(--green-light); color: var(--green); }
 </style>
 </head>
-
 <body>
 
-<div class="product-grid">
-
-  <div class="product-card">
-    <div class="product-img">
-      <img src="furnitur/lemari-2-pintu.jpg">
+<!-- ─── TOP NAV ─── -->
+<nav class="topnav">
+  <a href="#" class="topnav-logo" onclick="switchPage('dashboard')">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     </div>
-    <div class="product-info">
-      <div class="product-name">Lemari 2 Pintu</div>
-      <div class="product-price">Rp 4.299.000</div>
+    <div>
+      <span class="logo-text">Hint Interior</span>
+      <span class="logo-sub">Custom Furniture</span>
+    </div>
+  </a>
+
+  <div class="topnav-tabs">
+    <button class="tab-btn active" onclick="switchPage('dashboard');setActiveTab(this)">Beranda</button>
+    <button class="tab-btn" onclick="switchPage('catalog');setActiveTab(this)">Katalog</button>
+    <button class="tab-btn" onclick="switchPage('planner');setActiveTab(this)">Perencana Ruang</button>
+    <button class="tab-btn" onclick="switchPage('inspiration');setActiveTab(this)">Inspirasi</button>
+  </div>
+
+  <div class="topnav-actions">
+    <button class="btn-nav btn-outline">Masuk</button>
+    <button class="btn-nav btn-accent">Konsultasi Gratis</button>
+    <div class="cart-icon" onclick="showToast('Keranjang kamu kosong')">
+      <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cart-count">0</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════ DASHBOARD PAGE ══════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <!-- HERO -->
+  <section style="background: var(--charcoal);">
+    <div class="hero">
+      <div class="fade-up">
+        <div class="hero-eyebrow">
+          <span>Rancang Ruang Impianmu</span>
+        </div>
+        <h1 class="hero-title">
+          Furnitur Custom<br>
+          untuk <em>Setiap</em><br>
+          Sudut Rumah
+        </h1>
+        <p class="hero-desc">
+          Dari lemari pakaian hingga rak buku, kami bantu kamu merancang, 
+          memilih material, dan mewujudkan furnitur yang benar-benar sesuai 
+          dengan ruang dan selera kamu.
+        </p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="switchPage('planner');setActiveTabByIndex(2)">
+            Mulai Merancang →
+          </button>
+          <button class="btn-ghost" onclick="switchPage('catalog');setActiveTabByIndex(1)">
+            Lihat Katalog
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <div class="stat-num">250+</div>
+            <div class="stat-label">Model Furnitur</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">48</div>
+            <div class="stat-label">Pilihan Material</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">12 Kota</div>
+            <div class="stat-label">Jangkauan Pengiriman</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Visual -->
+      <div class="hero-visual fade-up-3">
+        <div class="room-canvas">
+          <div class="room-wall-left"></div>
+          <div class="room-back"></div>
+          <div class="room-floor"></div>
+
+          <!-- Wardrobe -->
+          <div class="furniture-wardrobe">
+            <div class="wardrobe-door"><div class="wardrobe-handle"></div></div>
+            <div class="wardrobe-door" style="left: auto; right:4%"><div class="wardrobe-handle"></div></div>
+          </div>
+
+          <!-- Shelves -->
+          <div class="furniture-shelf">
+            <div class="shelf-plank"></div>
+            <div class="shelf-plank"></div>
+            <div class="shelf-plank"></div>
+            <div class="shelf-plank"></div>
+          </div>
+
+          <!-- Bed frame -->
+          <div class="furniture-bed">
+            <div class="bed-pillow"></div>
+            <div class="bed-pillow"></div>
+          </div>
+
+          <!-- Dimension tags -->
+          <div class="dim-tag" style="bottom: 50%; left: 10%; transform: translateY(50%)">PAX 200×60×236cm</div>
+          <div class="dim-tag" style="top: 12%; right: 8%">Kayu Solid Oak</div>
+          <div class="dim-tag" style="bottom: 44%; left: 42%">KALLAX Custom</div>
+        </div>
+
+        <!-- Quick stats below visual -->
+        <div style="display: flex; gap: 10px; margin-top: 12px;">
+          <span class="tag-chip chip-warm">Estimasi 14 hari</span>
+          <span class="tag-chip chip-green">Produk Ramah Lingkungan</span>
+          <span class="tag-chip" style="background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5);">Garansi 2 Tahun</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES BAR -->
+  <div class="features-bar">
+    <div class="features-inner">
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="feature-title">Material Berkualitas</div>
+        <div class="feature-desc">Kayu solid, plywood Baltic Birch, dan MDF premium pilihan terbaik</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="feature-title">Modular & Fleksibel</div>
+        <div class="feature-desc">Ratusan kombinasi modul yang bisa disesuaikan dengan ruang kamu</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41M20 12h-2M6 12H4M17.66 17.66l-1.41-1.41M7.76 7.76L6.34 6.34"/></svg>
+        </div>
+        <div class="feature-title">Perancang Online</div>
+        <div class="feature-desc">Visualisasikan furniturmu dalam ruang 3D sebelum memesan</div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+        <div class="feature-title">Pemasangan Profesional</div>
+        <div class="feature-desc">Tim tukang berpengalaman siap memasang di seluruh kota besar</div>
+      </div>
     </div>
   </div>
 
-  <div class="product-card">
-    <div class="product-img">
-      <img src="furnitur/rak-buku.jpg">
+  <!-- KOLEKSI UNGGULAN -->
+  <div class="section-wrap">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Koleksi Unggulan</h2>
+        <p class="section-sub">Paling banyak dicari minggu ini</p>
+      </div>
+      <a href="#" class="section-link" onclick="switchPage('catalog');setActiveTabByIndex(1);return false">Semua Produk →</a>
     </div>
-    <div class="product-info">
-      <div class="product-name">Rak Buku</div>
-      <div class="product-price">Rp 1.499.000</div>
+
+    <div class="product-grid">
+      <!-- Card 1 -->
+      <div class="product-card" onclick="openModal('wardrobe')">
+        <div class="product-img" style="background: #EDE0CC;">
+          <span class="badge-new product-badge">Baru</span>
+          <div class="product-wish"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <svg class="product-img-svg" viewBox="0 0 200 220" fill="none">
+            <rect x="10" y="10" width="180" height="200" rx="3" fill="#9C8060"/>
+            <rect x="15" y="15" width="83" height="190" rx="2" fill="#8A7050" opacity=".6"/>
+            <rect x="102" y="15" width="83" height="190" rx="2" fill="#8A7050" opacity=".6"/>
+            <rect x="90" y="80" width="6" height="40" rx="3" fill="rgba(255,255,255,0.3)"/>
+            <rect x="104" y="80" width="6" height="40" rx="3" fill="rgba(255,255,255,0.3)"/>
+            <rect x="10" y="105" width="180" height="2" fill="rgba(0,0,0,0.15)"/>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-series">Seri NORDIC</div>
+          <div class="product-name">Lemari Pakaian Dua Pintu</div>
+          <div class="product-desc">Kayu Oak solid, sistem engsel soft-close, 4 rak dalam + gantungan.</div>
+          <div class="product-variants">
+            <div class="variant-dot selected" style="background:#9C8060" title="Oak Natural"></div>
+            <div class="variant-dot" style="background:#4A4038" title="Walnut"></div>
+            <div class="variant-dot" style="background:#E8E0D4" title="Putih"></div>
+            <div class="variant-dot" style="background:#2C2820" title="Hitam"></div>
+          </div>
+          <div class="product-footer">
+            <div>
+              <span class="product-price-old">Rp 5.499.000</span>
+              <span class="product-price">Rp 4.299.000</span>
+            </div>
+            <button class="btn-customize" onclick="event.stopPropagation();switchPage('planner');setActiveTabByIndex(2)">Kustomisasi</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="product-card">
+        <div class="product-img" style="background: #E8F0E6;">
+          <span class="badge-popular product-badge">Terlaris</span>
+          <div class="product-wish"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <svg class="product-img-svg" viewBox="0 0 200 200" fill="none">
+            <rect x="10" y="10" width="180" height="180" rx="2" fill="#8A9870" opacity=".3"/>
+            <rect x="20" y="20" width="160" height="4" rx="2" fill="#6A7850"/>
+            <rect x="20" y="70" width="160" height="4" rx="2" fill="#6A7850"/>
+            <rect x="20" y="120" width="160" height="4" rx="2" fill="#6A7850"/>
+            <rect x="20" y="170" width="160" height="4" rx="2" fill="#6A7850"/>
+            <rect x="10" y="10" width="4" height="180" rx="2" fill="#6A7850"/>
+            <rect x="186" y="10" width="4" height="180" rx="2" fill="#6A7850"/>
+            <rect x="30" y="30" width="60" height="36" rx="2" fill="#789060" opacity=".6"/>
+            <rect x="100" y="30" width="80" height="36" rx="2" fill="#6A8050" opacity=".4"/>
+            <rect x="30" y="80" width="150" height="36" rx="2" fill="#789060" opacity=".5"/>
+            <rect x="30" y="128" width="40" height="36" rx="2" fill="#6A8050" opacity=".6"/>
+            <rect x="80" y="128" width="100" height="36" rx="2" fill="#789060" opacity=".4"/>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-series">Seri BOTANIK</div>
+          <div class="product-name">Rak Buku Modular</div>
+          <div class="product-desc">Plywood premium, 5 tingkat, bisa dikonfigurasi horizontal/vertikal.</div>
+          <div class="product-variants">
+            <div class="variant-dot selected" style="background:#6A7850" title="Sage Green"></div>
+            <div class="variant-dot" style="background:#9C8060" title="Oak"></div>
+            <div class="variant-dot" style="background:#E8E0D4" title="Putih"></div>
+          </div>
+          <div class="product-footer">
+            <span class="product-price">Rp 2.150.000</span>
+            <button class="btn-add-cart" onclick="addCart()">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="product-card">
+        <div class="product-img" style="background: #F0E8E0;">
+          <div class="product-wish"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <svg class="product-img-svg" viewBox="0 0 200 180" fill="none">
+            <rect x="20" y="100" width="160" height="60" rx="4" fill="#9C8060"/>
+            <rect x="20" y="80" width="160" height="24" rx="4" fill="#8A7050"/>
+            <rect x="30" y="30" width="50" height="55" rx="4" fill="#A89070"/>
+            <rect x="90" y="45" width="40" height="40" rx="4" fill="#A89070"/>
+            <rect x="145" y="30" width="35" height="55" rx="4" fill="#A89070"/>
+            <rect x="35" y="160" width="20" height="15" rx="2" fill="#7A6040"/>
+            <rect x="145" y="160" width="20" height="15" rx="2" fill="#7A6040"/>
+            <ellipse cx="55" cy="58" rx="10" ry="10" fill="#D4B896" opacity=".5"/>
+            <ellipse cx="160" cy="58" rx="7" ry="7" fill="#D4B896" opacity=".5"/>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-series">Seri SANTAI</div>
+          <div class="product-name">Sofa Modular 3 Dudukan</div>
+          <div class="product-desc">Rangka kayu solid, busa HR 35D, kain katun Belgia tahan lama.</div>
+          <div class="product-variants">
+            <div class="variant-dot selected" style="background:#C4B099" title="Beige"></div>
+            <div class="variant-dot" style="background:#7C8A7A" title="Sage"></div>
+            <div class="variant-dot" style="background:#4A4848" title="Abu Tua"></div>
+            <div class="variant-dot" style="background:#8B5E3C" title="Coklat"></div>
+          </div>
+          <div class="product-footer">
+            <span class="product-price">Rp 7.800.000</span>
+            <button class="btn-add-cart" onclick="addCart()">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="product-card">
+        <div class="product-img" style="background: #E8E4F0;">
+          <span class="badge-sale product-badge">-20%</span>
+          <div class="product-wish"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <svg class="product-img-svg" viewBox="0 0 200 200" fill="none">
+            <rect x="10" y="140" width="180" height="50" rx="3" fill="#7A7090"/>
+            <rect x="40" y="80" width="120" height="65" rx="3" fill="#9090B0"/>
+            <rect x="80" y="20" width="40" height="65" rx="3" fill="#9090B0"/>
+            <rect x="50" y="85" width="50" height="55" rx="2" fill="rgba(255,255,255,0.1)"/>
+            <rect x="105" y="85" width="50" height="55" rx="2" fill="rgba(255,255,255,0.1)"/>
+            <rect x="88" y="25" width="25" height="55" rx="2" fill="rgba(255,255,255,0.1)"/>
+            <rect x="93" y="100" width="14" height="25" rx="7" fill="rgba(255,255,255,0.25)"/>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-series">Seri ARKADIA</div>
+          <div class="product-name">Meja Kerja Ergonomis</div>
+          <div class="product-desc">Permukaan anti-gores, laci kabel tersembunyi, kaki adjustable ±10cm.</div>
+          <div class="product-variants">
+            <div class="variant-dot selected" style="background:#7A7090" title="Lavendel"></div>
+            <div class="variant-dot" style="background:#4A4038" title="Walnut"></div>
+            <div class="variant-dot" style="background:#E8E0D4" title="Putih"></div>
+          </div>
+          <div class="product-footer">
+            <div>
+              <span class="product-price-old">Rp 3.200.000</span>
+              <span class="product-price">Rp 2.560.000</span>
+            </div>
+            <button class="btn-add-cart" onclick="addCart()">+ Keranjang</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="product-card">
-    <div class="product-img">
-      <img src="furnitur/sofa-modular.jpg">
+  <!-- INSPIRASI SECTION -->
+  <div class="section-wrap" style="padding-top: 0;">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title">Inspirasi Ruangan</h2>
+        <p class="section-sub">Temukan gaya yang cocok untukmu</p>
+      </div>
     </div>
-    <div class="product-info">
-      <div class="product-name">Sofa Modular</div>
-      <div class="product-price">Rp 6.999.000</div>
-    </div>
-  </div>
-
-  <div class="product-card">
-    <div class="product-img">
-      <img src="furnitur/meja-kerja.jpg">
-    </div>
-    <div class="product-info">
-      <div class="product-name">Meja Kerja</div>
-      <div class="product-price">Rp 2.199.000</div>
+    <div class="inspiration-grid">
+      <div class="inspo-card" style="background: linear-gradient(135deg, #3D3428 0%, #5A4A36 50%, #3D3428 100%);">
+        <div class="inspo-overlay" style="opacity: 0.8;">
+          <div class="inspo-label">Ruang Keluarga</div>
+          <div class="inspo-title">Scandinavian<br>Minimalis</div>
+          <div class="inspo-sub">Kayu terang, linen natural, cahaya alami maksimal</div>
+          <div class="inspo-btn" onclick="switchPage('planner');setActiveTabByIndex(2)">Rancang Ruang Ini →</div>
+        </div>
+        <!-- Mini furniture silhouettes -->
+        <svg style="position:absolute;bottom:38%;left:10%;width:70%;opacity:0.2" viewBox="0 0 300 150" fill="none">
+          <rect x="0" y="60" width="130" height="70" rx="4" fill="white"/>
+          <rect x="140" y="80" width="80" height="50" rx="4" fill="white"/>
+          <rect x="230" y="30" width="70" height="100" rx="2" fill="white"/>
+        </svg>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #2A3828 0%, #384830 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Kamar Tidur</div>
+          <div class="inspo-title">Natural Jungle</div>
+          <div class="inspo-sub">Warna bumi, material rotan & bambu</div>
+          <div class="inspo-btn">Lihat Detail →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #2A2838 0%, #383058 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Ruang Kerja</div>
+          <div class="inspo-title">Dark Academia</div>
+          <div class="inspo-sub">Kayu gelap, kulit, & perpustakaan pribadi</div>
+          <div class="inspo-btn">Lihat Detail →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #382420 0%, #503428 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Dapur</div>
+          <div class="inspo-title">Industrial Warm</div>
+          <div class="inspo-sub">Metal brushed, kayu reclaimed, bata ekspos</div>
+          <div class="inspo-btn">Lihat Detail →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #383428 0%, #504838 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Ruang Makan</div>
+          <div class="inspo-title">Japandi Fusion</div>
+          <div class="inspo-sub">Garis bersih, ketidaksempurnaan indah, wabi-sabi</div>
+          <div class="inspo-btn">Lihat Detail →</div>
+        </div>
+      </div>
     </div>
   </div>
 
 </div>
 
+<!-- ══════════════ CATALOG PAGE ══════════════ -->
+<div class="page" id="page-catalog">
+
+  <div class="category-tabs">
+    <div class="category-tabs-inner">
+      <button class="cat-tab active" onclick="filterCategory('all',this)">Semua</button>
+      <button class="cat-tab" onclick="filterCategory('storage',this)">Lemari & Penyimpanan</button>
+      <button class="cat-tab" onclick="filterCategory('bedroom',this)">Kamar Tidur</button>
+      <button class="cat-tab" onclick="filterCategory('living',this)">Ruang Tamu</button>
+      <button class="cat-tab" onclick="filterCategory('office',this)">Ruang Kerja</button>
+      <button class="cat-tab" onclick="filterCategory('kitchen',this)">Dapur</button>
+      <button class="cat-tab" onclick="filterCategory('outdoor',this)">Outdoor</button>
+      <button class="cat-tab" onclick="filterCategory('kids',this)">Anak-anak</button>
+    </div>
+  </div>
+
+  <div class="catalog-layout">
+    <!-- Filter Panel -->
+    <div class="filter-panel">
+      <div class="filter-title">Filter Produk</div>
+
+      <div class="filter-section">
+        <div class="filter-section-label">Kisaran Harga</div>
+        <div class="price-range">
+          <input type="range" min="0" max="20000000" value="10000000" step="500000" id="price-range" oninput="document.getElementById('price-val').textContent = 'Rp ' + (this.value/1000000).toFixed(1) + ' Jt'">
+          <div class="price-range-labels">
+            <span>Rp 0</span>
+            <span id="price-val">Rp 10 Jt</span>
+            <span>Rp 20 Jt</span>
+          </div>
+        </div>
+      </div>
+      <div class="filter-divider"></div>
+
+      <div class="filter-section">
+        <div class="filter-section-label">Material</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" checked> Kayu Solid Oak</label>
+          <label class="filter-option"><input type="checkbox"> Plywood Birch</label>
+          <label class="filter-option"><input type="checkbox"> MDF Premium</label>
+          <label class="filter-option"><input type="checkbox"> Rotan Alam</label>
+          <label class="filter-option"><input type="checkbox"> Bambu Laminasi</label>
+          <label class="filter-option"><input type="checkbox"> Metal Powder Coat</label>
+          <label class="filter-option"><input type="checkbox"> Kaca Tempered</label>
+        </div>
+      </div>
+      <div class="filter-divider"></div>
+
+      <div class="filter-section">
+        <div class="filter-section-label">Warna / Finishing</div>
+        <div class="filter-color-grid">
+          <div class="color-swatch active" style="background:#D4C5A9" title="Natural"></div>
+          <div class="color-swatch" style="background:#4A4038" title="Walnut"></div>
+          <div class="color-swatch" style="background:#F5F0E8" title="Putih"></div>
+          <div class="color-swatch" style="background:#2C2820" title="Hitam"></div>
+          <div class="color-swatch" style="background:#4A6741" title="Sage"></div>
+          <div class="color-swatch" style="background:#7A7090" title="Lavender"></div>
+          <div class="color-swatch" style="background:#B8722A" title="Amber"></div>
+          <div class="color-swatch" style="background:#8B5E3C" title="Coklat"></div>
+        </div>
+      </div>
+      <div class="filter-divider"></div>
+
+      <div class="filter-section">
+        <div class="filter-section-label">Seri Koleksi</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" checked> Nordic</label>
+          <label class="filter-option"><input type="checkbox" checked> Botanik</label>
+          <label class="filter-option"><input type="checkbox"> Santai</label>
+          <label class="filter-option"><input type="checkbox"> Arkadia</label>
+          <label class="filter-option"><input type="checkbox"> Japandi</label>
+        </div>
+      </div>
+      <div class="filter-divider"></div>
+
+      <div class="filter-section">
+        <div class="filter-section-label">Fitur Khusus</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox"> Bisa Kustom Ukuran</label>
+          <label class="filter-option"><input type="checkbox"> Ramah Lingkungan</label>
+          <label class="filter-option"><input type="checkbox"> Assembly Mudah</label>
+          <label class="filter-option"><input type="checkbox"> Tersedia Stok</label>
+          <label class="filter-option"><input type="checkbox"> Bisa Cicilan 0%</label>
+        </div>
+      </div>
+
+      <button class="btn-apply-filter" onclick="showToast('Filter diterapkan')">Terapkan Filter</button>
+    </div>
+
+    <!-- Catalog Grid -->
+    <div class="catalog-right">
+      <div class="catalog-toolbar">
+        <span class="catalog-count">Menampilkan <strong>24 produk</strong></span>
+        <select class="sort-select" onchange="showToast('Diurutkan: ' + this.options[this.selectedIndex].text)">
+          <option>Paling Relevan</option>
+          <option>Harga: Rendah ke Tinggi</option>
+          <option>Harga: Tinggi ke Rendah</option>
+          <option>Terbaru</option>
+          <option>Terlaris</option>
+          <option>Rating Tertinggi</option>
+        </select>
+      </div>
+      <div class="product-grid" id="catalog-grid">
+        <!-- Products will be generated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ PLANNER PAGE ══════════════ -->
+<div class="page" id="page-planner">
+  <div class="planner-layout">
+
+    <!-- LEFT: Components -->
+    <div class="planner-left">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Komponen Furnitur</div>
+          <div class="panel-sub">Seret ke area rancang</div>
+        </div>
+        <div class="panel-actions">
+          <button class="icon-btn" title="Cari"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+          <button class="icon-btn" title="Filter"><svg viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg></button>
+        </div>
+      </div>
+
+      <div class="series-tabs">
+        <button class="series-tab active" onclick="setSeriesTab(this)">PAX</button>
+        <button class="series-tab" onclick="setSeriesTab(this)">KALLAX</button>
+        <button class="series-tab" onclick="setSeriesTab(this)">BESTA</button>
+        <button class="series-tab" onclick="setSeriesTab(this)">NORDIK</button>
+        <button class="series-tab" onclick="setSeriesTab(this)">JAPANDI</button>
+      </div>
+
+      <div class="components-scroll">
+        <div class="comp-group">
+          <div class="comp-group-label">Bingkai Lemari</div>
+          <div class="comp-item" draggable="true" ondragstart="drag(event,'frame-1')">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 40 50" fill="none"><rect x="2" y="2" width="36" height="46" rx="2" fill="#9C8060"/><rect x="6" y="6" width="28" height="38" fill="rgba(0,0,0,0.1)" rx="1"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Bingkai 50cm</div>
+              <div class="comp-size">50 × 58 × 236 cm</div>
+            </div>
+            <div class="comp-price">Rp 890k</div>
+            <button class="comp-add" onclick="addToPlanner('Bingkai 50cm', 890000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item" draggable="true">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 60 50" fill="none"><rect x="2" y="2" width="56" height="46" rx="2" fill="#9C8060"/><rect x="6" y="6" width="44" height="38" fill="rgba(0,0,0,0.1)" rx="1"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Bingkai 75cm</div>
+              <div class="comp-size">75 × 58 × 236 cm</div>
+            </div>
+            <div class="comp-price">Rp 1.1 Jt</div>
+            <button class="comp-add" onclick="addToPlanner('Bingkai 75cm', 1100000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item" draggable="true">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 80 50" fill="none"><rect x="2" y="2" width="76" height="46" rx="2" fill="#9C8060"/><rect x="6" y="6" width="30" height="38" fill="rgba(0,0,0,0.1)" rx="1"/><rect x="44" y="6" width="30" height="38" fill="rgba(0,0,0,0.1)" rx="1"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Bingkai 100cm</div>
+              <div class="comp-size">100 × 58 × 236 cm</div>
+            </div>
+            <div class="comp-price">Rp 1.4 Jt</div>
+            <button class="comp-add" onclick="addToPlanner('Bingkai 100cm', 1400000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+        </div>
+
+        <div class="comp-group">
+          <div class="comp-group-label">Pintu & Panel</div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 40 60" fill="none"><rect x="2" y="2" width="36" height="56" rx="2" fill="#A89070"/><rect x="6" y="6" width="28" height="44" fill="rgba(0,0,0,0.08)" rx="1"/><rect x="28" y="28" width="4" height="8" rx="2" fill="rgba(255,255,255,0.4)"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Pintu Panel Solid</div>
+              <div class="comp-size">50 × 229 cm</div>
+            </div>
+            <div class="comp-price">Rp 650k</div>
+            <button class="comp-add" onclick="addToPlanner('Pintu Panel Solid', 650000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 40 60" fill="none"><rect x="2" y="2" width="36" height="56" rx="2" fill="#A89070" opacity=".4"/><rect x="2" y="2" width="36" height="56" rx="2" stroke="#A89070" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Pintu Kaca Frosted</div>
+              <div class="comp-size">50 × 229 cm</div>
+            </div>
+            <div class="comp-price">Rp 850k</div>
+            <button class="comp-add" onclick="addToPlanner('Pintu Kaca Frosted', 850000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 40 60" fill="none">
+                <rect x="2" y="2" width="36" height="26" rx="2" fill="#A89070"/>
+                <rect x="2" y="32" width="36" height="26" rx="2" fill="#A89070"/>
+                <rect x="28" y="12" width="4" height="6" rx="2" fill="rgba(255,255,255,0.4)"/>
+                <rect x="28" y="42" width="4" height="6" rx="2" fill="rgba(255,255,255,0.4)"/>
+              </svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Pintu 2-Panel</div>
+              <div class="comp-size">75 × 229 cm</div>
+            </div>
+            <div class="comp-price">Rp 780k</div>
+            <button class="comp-add" onclick="addToPlanner('Pintu 2-Panel', 780000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+        </div>
+
+        <div class="comp-group">
+          <div class="comp-group-label">Interior Lemari</div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 50 40" fill="none"><rect x="2" y="16" width="46" height="8" rx="2" fill="#C8A870"/><line x1="24" y1="2" x2="24" y2="24" stroke="#A89060" stroke-width="2"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Rak Tengah</div>
+              <div class="comp-size">Lebar 50cm</div>
+            </div>
+            <div class="comp-price">Rp 280k</div>
+            <button class="comp-add" onclick="addToPlanner('Rak Tengah 50cm', 280000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 50 40" fill="none"><rect x="2" y="4" width="46" height="32" rx="2" fill="#C8A870" opacity=".3"/><rect x="4" y="6" width="42" height="6" rx="1" fill="#C8A870"/><rect x="4" y="16" width="42" height="6" rx="1" fill="#C8A870"/><rect x="4" y="26" width="42" height="6" rx="1" fill="#C8A870"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Laci 3-Susun</div>
+              <div class="comp-size">50 × 58 × 66 cm</div>
+            </div>
+            <div class="comp-price">Rp 520k</div>
+            <button class="comp-add" onclick="addToPlanner('Laci 3-Susun', 520000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 50 40" fill="none"><path d="M8 38 C8 20 42 20 42 4" stroke="#C8A870" stroke-width="3" fill="none"/><circle cx="25" cy="4" r="4" fill="#C8A870"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Gantungan Pakaian</div>
+              <div class="comp-size">Panjang 50cm</div>
+            </div>
+            <div class="comp-price">Rp 150k</div>
+            <button class="comp-add" onclick="addToPlanner('Gantungan Pakaian', 150000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+        </div>
+
+        <div class="comp-group">
+          <div class="comp-group-label">Kaki & Alas</div>
+          <div class="comp-item">
+            <div class="comp-thumb">
+              <svg viewBox="0 0 60 20" fill="none"><rect x="2" y="2" width="56" height="8" rx="2" fill="#9C8060"/><rect x="8" y="10" width="8" height="8" rx="1" fill="#7A6040"/><rect x="44" y="10" width="8" height="8" rx="1" fill="#7A6040"/></svg>
+            </div>
+            <div class="comp-info">
+              <div class="comp-name">Kaki Persegi Pendek</div>
+              <div class="comp-size">Tinggi 10cm</div>
+            </div>
+            <div class="comp-price">Rp 180k</div>
+            <button class="comp-add" onclick="addToPlanner('Kaki Persegi Pendek', 180000)"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MIDDLE: Canvas -->
+    <div class="planner-canvas">
+      <div class="canvas-toolbar">
+        <button class="tool-btn active" onclick="setToolActive(this)">
+          <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z" opacity=".2"/><path d="M9 9h6v6H9z"/></svg>
+          Pilih
+        </button>
+        <button class="tool-btn" onclick="setToolActive(this)">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Grid
+        </button>
+        <button class="tool-btn" onclick="setToolActive(this)">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Zoom
+        </button>
+        <button class="tool-btn" onclick="setToolActive(this)">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Catatan
+        </button>
+        <button class="tool-btn" onclick="setToolActive(this)" style="border-left: 1px solid var(--border);">
+          <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          Undo
+        </button>
+      </div>
+
+      <!-- Room Render -->
+      <div class="room-render" id="room-render"
+        ondragover="event.preventDefault()" 
+        ondrop="dropOnCanvas(event)">
+        <div class="render-back-wall"></div>
+        <div class="render-left-wall"></div>
+        <div class="render-floor"></div>
+        <div class="grid-overlay" id="grid-overlay"></div>
+
+        <!-- Default furniture -->
+        <div class="render-wardrobe" id="wardrobe-render">
+          <div class="render-module"><div class="render-module-door-handle"></div></div>
+          <div class="render-module"><div class="render-module-door-handle"></div></div>
+          <div class="render-module"><div class="render-module-door-handle"></div></div>
+        </div>
+
+        <div class="render-shelf-unit">
+          <div class="render-shelf-line" style="top: 25%"></div>
+          <div class="render-shelf-line" style="top: 50%"></div>
+          <div class="render-shelf-line" style="top: 75%"></div>
+        </div>
+
+        <!-- Selection indicator -->
+        <div class="selection-ring" id="selection-ring" style="left: 20%; bottom: 38%; width: 200px; height: 260px; display: none;"></div>
+
+        <!-- Dimension labels -->
+        <div class="dim-arrow" style="bottom: 36%; left: 20%; font-size: 9px;">← 200cm →</div>
+        <div class="dim-arrow" style="bottom: 60%; left: 17%; writing-mode: vertical-rl; transform: rotate(180deg); font-size: 9px;">260cm</div>
+
+        <!-- Room size -->
+        <div class="room-size-bar"><strong>Ruang:</strong> 400 × 300 × 260 cm</div>
+
+        <!-- Zoom controls -->
+        <div class="zoom-controls">
+          <button class="zoom-btn" onclick="zoom(1)">+</button>
+          <div class="zoom-divider"></div>
+          <div class="zoom-level" id="zoom-level">100%</div>
+          <div class="zoom-divider"></div>
+          <button class="zoom-btn" onclick="zoom(-1)">−</button>
+        </div>
+      </div>
+
+      <!-- Canvas hint -->
+      <div class="canvas-hint">
+        <svg viewBox="0 0 24 24"><path d="M5 9l4 4 4-4M5 15l4 4 4-4"/></svg>
+        Seret komponen dari panel kiri, atau klik +
+      </div>
+
+      <!-- View toggle -->
+      <div class="canvas-view-toggle">
+        <button class="view-btn active" onclick="setView(this,'perspective')">Perspektif</button>
+        <button class="view-btn" onclick="setView(this,'front')">Tampak Depan</button>
+        <button class="view-btn" onclick="setView(this,'top')">Tampak Atas</button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Configuration -->
+    <div class="planner-right">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Konfigurasi</div>
+          <div class="panel-sub">Atur detail & material</div>
+        </div>
+        <button class="icon-btn" onclick="showToast('Desain disimpan!')"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></button>
+      </div>
+
+      <!-- Room settings -->
+      <div class="config-section">
+        <div class="config-label">Ukuran Ruang (cm)</div>
+        <div class="dimension-inputs">
+          <div class="dim-input-wrap">
+            <div class="dim-input-label">Panjang</div>
+            <input type="number" class="dim-input" value="400" min="100" max="1200" onchange="updateDimension()">
+          </div>
+          <div class="dim-input-wrap">
+            <div class="dim-input-label">Lebar</div>
+            <input type="number" class="dim-input" value="300" min="100" max="1200" onchange="updateDimension()">
+          </div>
+          <div class="dim-input-wrap">
+            <div class="dim-input-label">Tinggi</div>
+            <input type="number" class="dim-input" value="260" min="200" max="400" onchange="updateDimension()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Material selector -->
+      <div class="config-section">
+        <div class="config-label">Material & Finishing</div>
+        <select class="config-select">
+          <option>Oak Natural (Glossy)</option>
+          <option>Oak Natural (Matte)</option>
+          <option>Walnut Dark</option>
+          <option>Pine Light</option>
+          <option>MDF Putih Glossy</option>
+          <option>MDF Abu-abu Matte</option>
+          <option>Veneer Teak</option>
+        </select>
+        <div class="material-grid">
+          <div class="material-chip selected" style="background: linear-gradient(135deg, #C8A870, #9C7850);" title="Oak Natural"><span>Oak</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #4A3828, #2E2418);" title="Walnut"><span>Walnut</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #F0EAE0, #E0D8CC);" title="Putih"><span>Putih</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #8A9870, #6A7850);" title="Sage"><span>Sage</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #7A8090, #5A6070);" title="Abu"><span>Abu</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #4A3848, #2E2030);" title="Ungu Tua"><span>Ungu</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #B8722A, #905218);" title="Amber"><span>Amber</span></div>
+          <div class="material-chip" style="background: linear-gradient(135deg, #3A3A3A, #1A1A1A);" title="Hitam"><span>Hitam</span></div>
+        </div>
+      </div>
+
+      <!-- Gagang/handle -->
+      <div class="config-section">
+        <div class="config-label">Gagang & Aksesoris</div>
+        <select class="config-select">
+          <option>Gagang Krom Modern</option>
+          <option>Gagang Emas Matte</option>
+          <option>Gagang Hitam Matte</option>
+          <option>Tanpa Gagang (Push-open)</option>
+          <option>Gagang Kayu Kecil</option>
+        </select>
+      </div>
+
+      <!-- Items list -->
+      <div class="config-label" style="padding: 0 1.5rem; margin-bottom: 8px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Komponen Dipilih</div>
+      <div class="items-scroll" id="items-list">
+        <div class="item-row selected" onclick="selectItem(this)">
+          <div class="item-num">1</div>
+          <div style="flex:1;">
+            <div class="item-name">Bingkai 100cm</div>
+            <div class="item-detail">Oak Natural × 1</div>
+          </div>
+          <div class="item-price">Rp 1.4 Jt</div>
+          <button class="item-delete" onclick="event.stopPropagation();removeItem(this,1400000)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+        </div>
+        <div class="item-row" onclick="selectItem(this)">
+          <div class="item-num">2</div>
+          <div style="flex:1;">
+            <div class="item-name">Pintu Panel Solid</div>
+            <div class="item-detail">Walnut × 2</div>
+          </div>
+          <div class="item-price">Rp 1.3 Jt</div>
+          <button class="item-delete" onclick="event.stopPropagation();removeItem(this,1300000)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+        </div>
+        <div class="item-row" onclick="selectItem(this)">
+          <div class="item-num">3</div>
+          <div style="flex:1;">
+            <div class="item-name">Rak Tengah 50cm</div>
+            <div class="item-detail">Oak Natural × 3</div>
+          </div>
+          <div class="item-price">Rp 840k</div>
+          <button class="item-delete" onclick="event.stopPropagation();removeItem(this,840000)"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></button>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary-panel">
+        <div class="summary-row"><span>Subtotal komponen</span><span id="subtotal">Rp 3.540.000</span></div>
+        <div class="summary-row"><span>Biaya pemasangan</span><span>Rp 350.000</span></div>
+        <div class="summary-row"><span>Pengiriman Jakarta</span><span>Gratis</span></div>
+        <div class="summary-total"><span>Total Estimasi</span><span id="total-price">Rp 3.890.000</span></div>
+        <button class="btn-save-config" onclick="showToast('Desain ditambahkan ke keranjang!')">Pesan Sekarang →</button>
+        <button class="btn-save-secondary" onclick="showToast('Desain tersimpan di akun kamu')">Simpan Desain</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ INSPIRATION PAGE ══════════════ -->
+<div class="page" id="page-inspiration">
+  <div class="section-wrap" style="padding-top: 3rem;">
+    <h1 class="section-title" style="font-family:'DM Serif Display',serif; font-size: 40px; margin-bottom: 0.5rem;">Galeri Inspirasi</h1>
+    <p style="color:var(--text-secondary); margin-bottom: 2.5rem;">Temukan gaya ruangan yang cocok dengan kepribadianmu</p>
+    <div class="inspiration-grid" style="grid-template-rows: 380px 380px;">
+      <div class="inspo-card" style="background: linear-gradient(160deg, #3D3428 0%, #5A4A36 100%);">
+        <div class="inspo-overlay" style="opacity: 0.85;">
+          <div class="inspo-label">Ruang Keluarga · Scandinavian</div>
+          <div class="inspo-title">Nordic Minimal Living</div>
+          <div class="inspo-sub">Kayu pinus terang, sofa linen, cahaya alami</div>
+          <div class="inspo-btn" onclick="switchPage('planner');setActiveTabByIndex(2)">Rancang Gaya Ini ↗</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #283828 0%, #384830 100%);">
+        <div class="inspo-overlay" style="opacity: 0.88;">
+          <div class="inspo-label">Kamar Tidur · Tropical</div>
+          <div class="inspo-title">Jungle Sanctuary</div>
+          <div class="inspo-sub">Bambu, rotan, tanaman dalam ruangan</div>
+          <div class="inspo-btn">Lihat Produk →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #282838 0%, #383058 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Ruang Kerja · Dark Academia</div>
+          <div class="inspo-title">Scholar's Den</div>
+          <div class="inspo-sub">Walnut gelap, kulit, lampu vintage</div>
+          <div class="inspo-btn">Lihat Produk →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #382420 0%, #503428 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Dapur · Industrial</div>
+          <div class="inspo-title">Iron & Wood Kitchen</div>
+          <div class="inspo-sub">Metal hitam, kayu reclaimed, bata ekspos</div>
+          <div class="inspo-btn">Lihat Produk →</div>
+        </div>
+      </div>
+      <div class="inspo-card" style="background: linear-gradient(135deg, #383428 0%, #504838 100%);">
+        <div class="inspo-overlay" style="opacity: 0.9;">
+          <div class="inspo-label">Ruang Makan · Japandi</div>
+          <div class="inspo-title">Wabi-Sabi Table</div>
+          <div class="inspo-sub">Simetri sederhana, kayu alami bertekstur</div>
+          <div class="inspo-btn">Lihat Produk →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal-box" style="position:relative;">
+    <button class="modal-close" onclick="closeModalDirect()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    <div class="modal-inner">
+      <div class="modal-img-side">
+        <svg viewBox="0 0 280 320" fill="none">
+          <rect x="10" y="10" width="260" height="290" rx="4" fill="#9C8060"/>
+          <rect x="18" y="18" width="115" height="274" rx="3" fill="rgba(0,0,0,0.12)"/>
+          <rect x="147" y="18" width="115" height="274" rx="3" fill="rgba(0,0,0,0.12)"/>
+          <rect x="124" y="80" width="8" height="60" rx="4" fill="rgba(255,255,255,0.3)"/>
+          <rect x="148" y="80" width="8" height="60" rx="4" fill="rgba(255,255,255,0.3)"/>
+          <rect x="10" y="152" width="260" height="3" fill="rgba(0,0,0,0.18)"/>
+        </svg>
+      </div>
+      <div class="modal-info-side">
+        <div class="modal-series">Seri NORDIC</div>
+        <h2 class="modal-name">Lemari Pakaian Dua Pintu</h2>
+        <p class="modal-tagline">Dirancang untuk memaksimalkan ruang penyimpanan dengan estetika Scandinavian yang bersih dan hangat. Cocok untuk kamar berukuran sedang hingga besar.</p>
+        <div class="modal-specs">
+          <div class="modal-spec-row"><span class="spec-key">Material</span><span class="spec-val">Oak Solid + MDF Premium</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Ukuran</span><span class="spec-val">200 × 60 × 220 cm</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Finishing</span><span class="spec-val">Natural Matte / Gloss</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Kapasitas</span><span class="spec-val">4 rak + 1 rel gantung</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Engsel</span><span class="spec-val">Soft-close Blum Austria</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Garansi</span><span class="spec-val">2 Tahun Penuh</span></div>
+          <div class="modal-spec-row"><span class="spec-key">Estimasi Produksi</span><span class="spec-val">10–14 hari kerja</span></div>
+        </div>
+        <div class="modal-price">Rp 4.299.000</div>
+        <div class="modal-btns">
+          <button class="btn-primary" onclick="addCart();closeModalDirect()">Tambah ke Keranjang</button>
+          <button class="btn-ghost" style="color:var(--charcoal);border-color:rgba(44,40,32,0.2);" onclick="closeModalDirect();switchPage('planner');setActiveTabByIndex(2)">Kustomisasi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <svg class="toast-icon" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">Berhasil!</span>
+</div>
+
+<script>
+// ─── Navigation ───
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+}
+function setActiveTab(el) {
+  document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+function setActiveTabByIndex(i) {
+  const tabs = document.querySelectorAll('.tab-btn');
+  tabs.forEach(t => t.classList.remove('active'));
+  if (tabs[i]) tabs[i].classList.add('active');
+}
+
+// ─── Category filter (catalog) ───
+function filterCategory(cat, el) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Kategori: ' + el.textContent);
+}
+
+// ─── Series tab (planner) ───
+function setSeriesTab(el) {
+  document.querySelectorAll('.series-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── Tool buttons (planner) ───
+let gridVisible = false;
+function setToolActive(el) {
+  document.querySelectorAll('.tool-btn').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  if (el.textContent.trim() === 'Grid') {
+    gridVisible = !gridVisible;
+    document.getElementById('grid-overlay').classList.toggle('visible', gridVisible);
+    if (gridVisible) el.classList.add('active'); else el.classList.remove('active');
+  }
+}
+
+// ─── View toggle ───
+function setView(el, view) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  showToast('Tampilan: ' + el.textContent);
+}
+
+// ─── Zoom ───
+let zoomLevel = 100;
+function zoom(dir) {
+  zoomLevel = Math.max(50, Math.min(200, zoomLevel + dir * 10));
+  document.getElementById('zoom-level').textContent = zoomLevel + '%';
+  document.getElementById('room-render').style.transform = 'scale(' + zoomLevel/100 + ')';
+}
+
+// ─── Cart ───
+let cartCount = 0;
+let totalPrice = 3890000;
+function addCart() {
+  cartCount++;
+  document.getElementById('cart-count').textContent = cartCount;
+  showToast('Produk ditambahkan ke keranjang!');
+}
+
+// ─── Planner: Add component ───
+let plannerItems = [
+  { name: 'Bingkai 100cm', detail: 'Oak Natural × 1', price: 1400000 },
+  { name: 'Pintu Panel Solid', detail: 'Walnut × 2', price: 1300000 },
+  { name: 'Rak Tengah 50cm', detail: 'Oak Natural × 3', price: 840000 }
+];
+
+function addToPlanner(name, price) {
+  plannerItems.push({ name, detail: 'Oak Natural × 1', price });
+  totalPrice += price;
+  renderItems();
+  showToast(name + ' ditambahkan!');
+}
+
+function renderItems() {
+  const list = document.getElementById('items-list');
+  let subtotal = plannerItems.reduce((s, i) => s + i.price, 0);
+  list.innerHTML = plannerItems.map((item, idx) => `
+    <div class="item-row" onclick="selectItem(this)">
+      <div class="item-num">${idx+1}</div>
+      <div style="flex:1;">
+        <div class="item-name">${item.name}</div>
+        <div class="item-detail">${item.detail}</div>
+      </div>
+      <div class="item-price">Rp ${(item.price/1000000).toFixed(2).replace('.00','').replace(/\B(?=(\d{3})+(?!\d))/g,'.')} Jt</div>
+      <button class="item-delete" onclick="event.stopPropagation();removeItemByIndex(${idx})">
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      </button>
+    </div>`).join('');
+  document.getElementById('subtotal').textContent = 'Rp ' + subtotal.toLocaleString('id-ID');
+  document.getElementById('total-price').textContent = 'Rp ' + (subtotal + 350000).toLocaleString('id-ID');
+}
+
+function removeItemByIndex(idx) {
+  plannerItems.splice(idx, 1);
+  renderItems();
+  showToast('Komponen dihapus');
+}
+function removeItem(btn, price) {
+  btn.closest('.item-row').remove();
+  totalPrice -= price;
+  document.getElementById('total-price').textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
+}
+function selectItem(row) {
+  document.querySelectorAll('.item-row').forEach(r => r.classList.remove('selected'));
+  row.classList.add('selected');
+  const sel = document.getElementById('selection-ring');
+  sel.style.display = 'block';
+}
+
+// ─── Drag & Drop ───
+function drag(e, id) { e.dataTransfer.setData('text', id); }
+function dropOnCanvas(e) {
+  e.preventDefault();
+  showToast('Komponen ditambahkan ke ruangan!');
+}
+
+// ─── Dimension update ───
+function updateDimension() {
+  const inputs = document.querySelectorAll('.dim-input');
+  const [l,w,h] = [...inputs].map(i => i.value);
+  document.querySelector('.room-size-bar').innerHTML = `<strong>Ruang:</strong> ${l} × ${w} × ${h} cm`;
+}
+
+// ─── Modal ───
+function openModal(type) {
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(e) {
+  if (e.target === document.getElementById('modal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+// ─── Toast ───
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── Generate catalog products ───
+const products = [
+  { series:'NORDIC', name:'Lemari 4 Pintu Geser', desc:'Kayu Oak, cermin terintegrasi, soft-close', price:'Rp 6.800.000', oldPrice:'', badge:'', img:'#EDE0CC', color:'#9C8060' },
+  { series:'BOTANIK', name:'Rak Display 5 Kolom', desc:'Plywood Birch, finishing matte, bisa digantung', price:'Rp 1.890.000', oldPrice:'', badge:'popular', img:'#E8F0E6', color:'#6A7850' },
+  { series:'SANTAI', name:'Meja Kopi Oval', desc:'Kaki kayu solid, permukaan marbel buatan', price:'Rp 2.400.000', oldPrice:'Rp 3.000.000', badge:'sale', img:'#F0E4D8', color:'#A87050' },
+  { series:'ARKADIA', name:'Kursi Kerja Ergonomis', desc:'Sandaran lumbar, roda PU, armrest adjustable', price:'Rp 3.200.000', oldPrice:'', badge:'new', img:'#E8E4F0', color:'#7A7090' },
+  { series:'JAPANDI', name:'Meja Makan 6 Kursi', desc:'Kayu Jati solid, kaki tirus, matte natural', price:'Rp 12.500.000', oldPrice:'', badge:'', img:'#EDE6D8', color:'#8A7050' },
+  { series:'BOTANIK', name:'Pot Stand Rotan', desc:'Rotan alam, tinggi adjustable, 3 level', price:'Rp 680.000', oldPrice:'', badge:'new', img:'#E8F0E6', color:'#7A9060' },
+  { series:'NORDIC', name:'Nakas Kamar 2 Laci', desc:'Oak putih, kaki emas, engsel soft-close', price:'Rp 1.450.000', oldPrice:'', badge:'popular', img:'#F5F0E8', color:'#B0A080' },
+  { series:'SANTAI', name:'Rak TV Modular', desc:'MDF lacquer, slot kabel tersembunyi, 180cm', price:'Rp 3.750.000', oldPrice:'Rp 4.200.000', badge:'sale', img:'#EAE4DC', color:'#9C8C70' },
+];
+
+function generateCatalog() {
+  const grid = document.getElementById('catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="openModal('generic')">
+      <div class="product-img" style="background:${p.img};">
+        ${p.badge === 'new' ? '<span class="badge-new product-badge">Baru</span>' : ''}
+        ${p.badge === 'popular' ? '<span class="badge-popular product-badge">Terlaris</span>' : ''}
+        ${p.badge === 'sale' ? '<span class="badge-sale product-badge">Sale</span>' : ''}
+        <div class="product-wish"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <svg style="width:65%;height:65%" viewBox="0 0 100 80" fill="none">
+          <rect x="5" y="5" width="90" height="70" rx="4" fill="${p.color}" opacity=".7"/>
+          <rect x="10" y="10" width="38" height="60" rx="2" fill="rgba(0,0,0,0.1)"/>
+          <rect x="52" y="10" width="38" height="60" rx="2" fill="rgba(0,0,0,0.1)"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <div class="product-series">${p.series}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div>
+            ${p.oldPrice ? `<span class="product-price-old">${p.oldPrice}</span>` : ''}
+            <span class="product-price">${p.price}</span>
+          </div>
+          <button class="btn-add-cart" onclick="event.stopPropagation();addCart()">+ Keranjang</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+generateCatalog();
+
+// ─── Material chip selection ───
+document.querySelectorAll('.material-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.material-chip').forEach(c => c.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+
+// ─── Color swatch selection ───
+document.querySelectorAll('.color-swatch').forEach(sw => {
+  sw.addEventListener('click', function() {
+    this.classList.toggle('active');
+  });
+});
+document.querySelectorAll('.variant-dot').forEach(vd => {
+  vd.addEventListener('click', function(e) {
+    e.stopPropagation();
+    this.closest('.product-variants').querySelectorAll('.variant-dot').forEach(d => d.classList.remove('selected'));
+    this.classList.add('selected');
+  });
+});
+</script>
 </body>
 </html>
