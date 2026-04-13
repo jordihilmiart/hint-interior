@@ -348,6 +348,29 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
       <button class="btn-sm btn-sm-primary" onclick="saveModal('modalMenu','Menu berhasil ditambahkan')">Simpan</button>
     </div>
   </div>
+  <div class="modal-bg" id="modalUser">
+  <div class="modal">
+    <div class="modal-header">
+      <span>Edit User</span>
+      <button onclick="closeModal('modalUser')">×</button>
+    </div>
+    <div class="modal-body">
+
+      <input id="editNama" placeholder="Nama"><br><br>
+      <input id="editEmail" placeholder="Email"><br><br>
+
+      <select id="editRole">
+        <option>Admin</option>
+        <option>Kasir</option>
+        <option>Manajer</option>
+      </select>
+
+    </div>
+    <div class="modal-footer">
+      <button onclick="saveUser()">Simpan</button>
+    </div>
+  </div>
+</div>
 </div>
 
 <!-- ===== MODAL: KONFIRMASI TRANSAKSI ===== -->
@@ -1253,6 +1276,233 @@ document.getElementById('loginPass').addEventListener('keydown', function(e) {
 document.getElementById('loginEmail').addEventListener('keydown', function(e) {
   if (e.key === 'Enter') doLogin();
 });
+</script>
+  <script>
+
+// ================= DATA =================
+
+// RESEP MENU
+const resepMenu = {
+  "Nasi Goreng": [
+    { bahan: "Beras", qty: 100 },
+    { bahan: "Telur", qty: 1 },
+    { bahan: "Minyak", qty: 10 }
+  ],
+  "Ayam Goreng": [
+    { bahan: "Ayam", qty: 1 },
+    { bahan: "Minyak", qty: 15 }
+  ]
+};
+
+// STOK
+let bahanStok = {
+  "Beras": 1000,
+  "Telur": 50,
+  "Minyak": 500,
+  "Ayam": 20
+};
+
+// MINIMUM STOK
+let stokMinimum = {
+  "Beras": 200,
+  "Telur": 10,
+  "Minyak": 100,
+  "Ayam": 5
+};
+
+// USER
+let users = [
+  {id:1, nama:"Admin", email:"admin@mail.com", role:"Admin"}
+];
+
+// POS
+let cart = [];
+let pendapatanHariIni = 0;
+let menuTerjual = {};
+let selectedUser = null;
+
+
+// ================= RESEP =================
+
+function lihatResep(namaMenu){
+  const resep = resepMenu[namaMenu];
+
+  if(!resep){
+    showToast("Resep belum tersedia","error");
+    return;
+  }
+
+  let html = `<b>${namaMenu}</b><br><br>`;
+  resep.forEach(r=>{
+    html += `- ${r.bahan} (${r.qty})<br>`;
+  });
+
+  document.getElementById("konfirmasiBody").innerHTML = html;
+  openModal("modalKonfirmasi");
+}
+
+
+// ================= EDIT USER =================
+
+function editUser(id){
+  selectedUser = users.find(u=>u.id===id);
+
+  document.getElementById("editNama").value = selectedUser.nama;
+  document.getElementById("editEmail").value = selectedUser.email;
+  document.getElementById("editRole").value = selectedUser.role;
+
+  openModal("modalUser");
+}
+
+function saveUser(){
+  selectedUser.nama = document.getElementById("editNama").value;
+  selectedUser.email = document.getElementById("editEmail").value;
+  selectedUser.role = document.getElementById("editRole").value;
+
+  showToast("User berhasil diupdate","success");
+  closeModal("modalUser");
+}
+
+
+// ================= POS =================
+
+function processTransaksi(){
+
+  if(cart.length === 0){
+    showToast("Keranjang kosong","error");
+    return;
+  }
+
+  cart.forEach(item=>{
+    let resep = resepMenu[item.nama];
+
+    if(!resep){
+      showToast("Resep tidak ditemukan","error");
+      return;
+    }
+
+    // 🔻 KURANGI STOK
+    resep.forEach(r=>{
+      bahanStok[r.bahan] -= r.qty * item.qty;
+
+      // 🔔 STOK MENIPIS
+      if(bahanStok[r.bahan] <= stokMinimum[r.bahan]){
+        tambahNotifikasi(`Stok ${r.bahan} menipis!`);
+      }
+
+      // ❌ STOK HABIS
+      if(bahanStok[r.bahan] <= 0){
+        updateMenuStatus(item.nama, false);
+      }
+    });
+
+    // 💰 PENDAPATAN
+    pendapatanHariIni += item.harga * item.qty;
+
+    // 📊 MENU TERLARIS
+    if(!menuTerjual[item.nama]){
+      menuTerjual[item.nama] = 0;
+    }
+    menuTerjual[item.nama] += item.qty;
+  });
+
+  cart = [];
+
+  showToast("Transaksi berhasil","success");
+
+  updateDashboard();
+}
+
+
+// ================= NOTIF =================
+
+function tambahNotifikasi(pesan){
+  const badge = document.getElementById("sbNotifBadge");
+
+  if(badge){
+    badge.innerText = parseInt(badge.innerText || 0) + 1;
+  }
+
+  showToast(pesan,"warn");
+}
+
+
+// ================= DASHBOARD =================
+
+function updateDashboard(){
+  const el = document.querySelector(".kpi-val");
+
+  if(el){
+    el.innerText = "Rp " + pendapatanHariIni.toLocaleString();
+  }
+
+  console.log("Menu Terlaris Hari Ini:", getMenuTerlaris());
+}
+
+
+// ================= MENU STATUS =================
+
+function updateMenuStatus(namaMenu, status){
+  const cards = document.querySelectorAll(".menu-card");
+
+  cards.forEach(card=>{
+    if(card.innerText.includes(namaMenu)){
+      if(!status){
+        card.classList.add("unavail");
+      }
+    }
+  });
+}
+
+
+// ================= MENU TERLARIS =================
+
+function getMenuTerlaris(){
+  let max = 0;
+  let best = "";
+
+  for(let m in menuTerjual){
+    if(menuTerjual[m] > max){
+      max = menuTerjual[m];
+      best = m;
+    }
+  }
+
+  return best || "-";
+}
+
+
+// ================= HELPER =================
+
+// Toast
+function showToast(msg,type="success"){
+  const container = document.getElementById("toastContainer");
+
+  if(!container) return;
+
+  const div = document.createElement("div");
+  div.className = `toast ${type}`;
+  div.innerText = msg;
+
+  container.appendChild(div);
+
+  setTimeout(()=>div.classList.add("show"),50);
+
+  setTimeout(()=>{
+    div.classList.remove("show");
+    setTimeout(()=>div.remove(),300);
+  },2500);
+}
+
+// Modal
+function openModal(id){
+  document.getElementById(id).classList.add("show");
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove("show");
+}
+
 </script>
 </body>
 </html>
