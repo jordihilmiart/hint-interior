@@ -1,1 +1,1 @@
-# hint-interior
+# RestoManager — Sistem Inventory & POS Restoran
