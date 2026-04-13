@@ -427,3 +427,305 @@
             <div id="dashboardContent">
                 <div class="row g-4 mb-4">
                     <div class="col-lg-3 col-md-6
+// === REGISTRASI & LOGIN SYSTEM ===
+// Inisialisasi data default
+function initData() {
+    const defaultData = {
+        users: [
+            {
+                id: 1,
+                nama: "Administrator",
+                email: "admin@restomanager.com",
+                password: "admin123", // hashed in real app
+                role: "Admin",
+                telepon: "081234567890",
+                status: "Aktif",
+                gagal_login: 0,
+                created_at: new Date().toISOString()
+            }
+        ],
+        notifications: [],
+        settings: {
+            stok_minimum_default: 5,
+            target_food_cost: 30,
+            margin_minimum: 40
+        }
+    };
+
+    if (!localStorage.getItem('restoData')) {
+        localStorage.setItem('restoData', JSON.stringify(defaultData));
+    }
+}
+
+// Sistem User Management
+class UserManager {
+    constructor() {
+        this.data = JSON.parse(localStorage.getItem('restoData') || '{}');
+    }
+
+    register(nama, email, password, telepon, role) {
+        // Validasi
+        if (this.findUserByEmail(email)) {
+            throw new Error('Email sudah terdaftar');
+        }
+
+        if (password.length < 8) {
+            throw new Error('Password minimal 8 karakter');
+        }
+
+        const newUser = {
+            id: Date.now(),
+            nama,
+            email,
+            password: btoa(password), // Simple hash untuk demo
+            telepon,
+            role,
+            status: "Menunggu Persetujuan", // Perlu approval admin
+            gagal_login: 0,
+            created_at: new Date().toISOString()
+        };
+
+        this.data.users.push(newUser);
+        this.save();
+        
+        // Auto approve untuk demo (dalam real app butuh admin approval)
+        newUser.status = "Aktif";
+        
+        return newUser;
+    }
+
+    login(email, password) {
+        const user = this.findUserByEmail(email);
+        if (!user) {
+            throw new Error('Email tidak ditemukan');
+        }
+
+        if (user.status !== "Aktif") {
+            throw new Error('Akun belum aktif atau dinonaktifkan');
+        }
+
+        if (user.password !== btoa(password)) {
+            user.gagal_login++;
+            if (user.gagal_login >= 5) {
+                user.dikunci_sampai = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+            }
+            this.save();
+            throw new Error('Password salah');
+        }
+
+        user.gagal_login = 0;
+        this.save();
+        return user;
+    }
+
+    findUserByEmail(email) {
+        return this.data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+    }
+
+    save() {
+        localStorage.setItem('restoData', JSON.stringify(this.data));
+    }
+
+    getCurrentUser() {
+        return JSON.parse(localStorage.getItem('currentUser') || 'null');
+    }
+
+    setCurrentUser(user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+    }
+
+    logout() {
+        localStorage.removeItem('currentUser');
+    }
+}
+
+// Inisialisasi
+const userManager = new UserManager();
+initData();
+
+// Event Listeners untuk Register
+document.addEventListener('DOMContentLoaded', function() {
+    // Show Register Modal
+    document.getElementById('showRegister').addEventListener('click', function() {
+        new bootstrap.Modal(document.getElementById('registerModal')).show();
+    });
+
+    // Show Login from Register
+    document.getElementById('showLoginFromRegister').addEventListener('click', function() {
+        bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+    });
+
+    // Password Strength Checker
+    document.getElementById('regPassword').addEventListener('input', function() {
+        const password = this.value;
+        const strength = document.getElementById('passwordStrength');
+        let score = 0;
+
+        if (password.length >= 8) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+
+        const colors = ['text-danger', 'text-warning', 'text-warning', 'text-success'];
+        const texts = ['Terlalu Lemah', 'Lemah', 'Cukup Kuat', 'Sangat Kuat'];
+        
+        strength.textContent = texts[Math.min(score, 3)];
+        strength.className = `form-text ${colors[Math.min(score, 3)]}`;
+    });
+
+    // Confirm Password Checker
+    document.getElementById('regConfirmPassword').addEventListener('input', function() {
+        const pass1 = document.getElementById('regPassword').value;
+        const pass2 = this.value;
+        const help = document.getElementById('confirmPasswordHelp');
+
+        if (pass1 !== pass2) {
+            help.textContent = 'Password tidak cocok';
+            help.className = 'form-text text-danger';
+        } else {
+            help.textContent = 'Password cocok';
+            help.className = 'form-text text-success';
+        }
+    });
+
+    // Toggle Password Visibility
+    document.getElementById('toggleRegPassword').addEventListener('click', function() {
+        const pass = document.getElementById('regPassword');
+        const icon = this.querySelector('i');
+        if (pass.type === 'password') {
+            pass.type = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            pass.type = 'password';
+            icon.className = 'fas fa-eye';
+        }
+    });
+
+    document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+        const pass = document.getElementById('regConfirmPassword');
+        const icon = this.querySelector('i');
+        if (pass.type === 'password') {
+            pass.type = 'text';
+            icon.className = 'fas fa-eye-slash';
+        } else {
+            pass.type = 'password';
+            icon.className = 'fas fa-eye';
+        }
+    });
+
+    // Register Form Submit
+    document.getElementById('registerForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('registerBtn');
+        const spinner = document.getElementById('registerSpinner');
+        
+        try {
+            btn.disabled = true;
+            spinner.classList.remove('d-none');
+
+            const nama = document.getElementById('regNama').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const telepon = document.getElementById('regTelepon').value;
+            const role = document.getElementById('regRole').value;
+
+            // Register user
+            const newUser = userManager.register(nama, email, password, telepon, role);
+            
+            // Auto login setelah register berhasil (untuk demo)
+            userManager.setCurrentUser(newUser);
+            
+            // Show success message
+            showToast('success', `Akun berhasil dibuat! Selamat datang ${newUser.nama}`);
+            
+            // Close modal dan show main app
+            bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+            showMainApp(newUser);
+            
+            // Reset form
+            this.reset();
+            
+        } catch (error) {
+            showToast('error', error.message);
+        } finally {
+            btn.disabled = false;
+            spinner.classList.add('d-none');
+        }
+    });
+
+    // Login Form (update existing)
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        try {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = userManager.login(email, password);
+            userManager.setCurrentUser(user);
+            
+            showToast('success', `Selamat datang ${user.nama}`);
+            showMainApp(user);
+            
+        } catch (error) {
+            showToast('error', error.message);
+            shakeInput(document.getElementById('loginEmail'));
+        }
+    });
+
+    // Helper function untuk show main app
+    window.showMainApp = function(user) {
+        document.getElementById('loginPage').classList.add('d-none');
+        document.getElementById('mainApp').classList.remove('d-none');
+        
+        // Update UI dengan user data
+        document.getElementById('userName').textContent = user.nama;
+        document.getElementById('userRole').textContent = user.role;
+        document.getElementById('pageTitle').textContent = 'Dashboard';
+        
+        // Load dashboard
+        loadDashboard();
+        updateActiveMenu('dashboard');
+    };
+
+    // Toast notification helper
+    window.showToast = function(type, message) {
+        const toast = document.createElement('div');
+        toast.className = `alert alert-${type === 'success' ? 'success' : 'danger'} position-fixed fade-in`;
+        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        toast.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} me-2"></i>
+            ${message}
+            <button type="button" class="btn-close ms-3" data-bs-dismiss="alert"></button>
+        `;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
+    };
+
+    // Shake animation untuk error input
+    function shakeInput(input) {
+        input.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => {
+            input.style.animation = '';
+        }, 500);
+    }
+});
+
+// Tambahkan CSS untuk shake animation dan toast
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
+    .hover-bg:hover {
+        background-color: #f8fafc !important;
+    }
+`;
+document.head.appendChild(style);
