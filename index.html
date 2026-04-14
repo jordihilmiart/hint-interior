@@ -144,9 +144,156 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-sh
   .row-2,.row-3{grid-template-columns:1fr}
   .pos-grid{grid-template-columns:repeat(2,1fr)}
 }
+/* ── AUTH ── */
+.auth-screen{display:none;position:fixed;inset:0;background:#0f172a;z-index:9999;align-items:center;justify-content:center;padding:20px}
+.auth-screen.show{display:flex}
+.auth-wrap{width:100%;max-width:420px}
+.auth-panel{background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.auth-header{background:#1e293b;padding:28px 32px 24px;text-align:center}
+.auth-logo{font-size:36px;margin-bottom:8px}
+.auth-brand{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.auth-tagline{font-size:12px;color:#94a3b8;margin-top:4px}
+.auth-tabs{display:flex;background:#f1f5f9;margin:0}
+.auth-tab{flex:1;padding:11px;font-size:13px;font-weight:600;cursor:pointer;text-align:center;color:#64748b;border:none;background:transparent;transition:all .2s;border-bottom:2px solid transparent}
+.auth-tab.active{background:#fff;color:#3b82f6;border-bottom-color:#3b82f6}
+.auth-form{padding:24px 28px}
+.auth-form-page{display:none}
+.auth-form-page.active{display:block}
+.a-field{margin-bottom:14px}
+.a-lbl{font-size:12px;font-weight:600;color:#475569;margin-bottom:5px;display:flex;align-items:center;justify-content:space-between}
+.a-lbl a{font-weight:400;color:#3b82f6;cursor:pointer;font-size:11px}
+.a-input-wrap{position:relative}
+.a-input-wrap input{padding-right:38px}
+.a-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#94a3b8;font-size:16px;padding:0;width:auto}
+.pw-strength{height:4px;border-radius:2px;background:#e2e8f0;margin-top:6px;overflow:hidden}
+.pw-bar{height:100%;border-radius:2px;transition:width .3s,background .3s;width:0}
+.pw-hint{font-size:10px;color:#94a3b8;margin-top:3px}
+.auth-btn{width:100%;padding:11px;background:#3b82f6;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;margin-top:4px;font-family:inherit}
+.auth-btn:hover{background:#2563eb}
+.auth-divider{text-align:center;font-size:12px;color:#94a3b8;margin:14px 0;position:relative}
+.auth-divider::before{content:'';position:absolute;top:50%;left:0;right:0;height:1px;background:#e2e8f0}
+.auth-divider span{background:#fff;padding:0 10px;position:relative}
+.auth-msg{padding:10px 12px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;border:1px solid}
+.auth-msg.show{display:block}
+.auth-msg.ok{background:#f0fdf4;border-color:#4ade80;color:#166534}
+.auth-msg.err{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.auth-msg.info{background:#eff6ff;border-color:#93c5fd;color:#1e40af}
+.fp-back{font-size:12px;color:#3b82f6;cursor:pointer;display:inline-flex;align-items:center;gap:4px;margin-bottom:14px;background:none;border:none;padding:0;font-family:inherit}
+.fp-back:hover{color:#2563eb}
+.user-list-preview{margin-top:10px;background:#f8fafc;border-radius:8px;padding:10px 12px;border:1px solid #e2e8f0;max-height:120px;overflow-y:auto}
+.user-list-preview-title{font-size:10px;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.user-chip{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:2px 8px;font-size:11px;color:#475569;margin:2px}
 </style>
 </head>
 <body>
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div class="auth-screen show" id="auth-screen">
+  <div class="auth-wrap">
+    <div class="auth-panel">
+      <div class="auth-header">
+        <div class="auth-logo">&#127869;</div>
+        <div class="auth-brand">RestoManager</div>
+        <div class="auth-tagline">Sistem Informasi Inventory Restoran</div>
+      </div>
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Masuk</button>
+        <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Daftar</button>
+      </div>
+      <div class="auth-form">
+        <!-- LOGIN -->
+        <div class="auth-form-page active" id="form-login">
+          <div class="auth-msg" id="login-msg"></div>
+          <div class="a-field">
+            <div class="a-lbl">Username atau Email</div>
+            <input id="l-user" type="text" placeholder="Masukkan username / email">
+          </div>
+          <div class="a-field">
+            <div class="a-lbl">Password <a onclick="switchTab('forgot')" style="font-weight:400;color:#3b82f6;cursor:pointer;font-size:11px">Lupa Password?</a></div>
+            <div class="a-input-wrap">
+              <input id="l-pass" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')doLogin()">
+              <button class="a-eye" onclick="togglePw('l-pass',this)">&#128065;</button>
+            </div>
+          </div>
+          <button class="auth-btn" onclick="doLogin()">&#8594; Masuk</button>
+          <div class="auth-divider"><span>atau</span></div>
+          <div style="text-align:center;font-size:12px;color:#64748b">
+            Belum punya akun? <a onclick="switchTab('register')" style="color:#3b82f6;cursor:pointer;font-weight:600">Daftar sekarang</a>
+          </div>
+          <div class="user-list-preview">
+            <div class="user-list-preview-title">&#128100; Akun terdaftar</div>
+            <div id="demo-chips"></div>
+          </div>
+        </div>
+        <!-- REGISTER -->
+        <div class="auth-form-page" id="form-register">
+          <div class="auth-msg" id="reg-msg"></div>
+          <div class="a-field">
+            <div class="a-lbl">Nama Lengkap <span style="color:#ef4444">*</span></div>
+            <input id="r-nama" type="text" placeholder="Ahmad Fauzi">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="a-field">
+              <div class="a-lbl">Username <span style="color:#ef4444">*</span></div>
+              <input id="r-user" type="text" placeholder="ahmad123">
+            </div>
+            <div class="a-field">
+              <div class="a-lbl">Email <span style="color:#ef4444">*</span></div>
+              <input id="r-email" type="email" placeholder="ahmad@email.com">
+            </div>
+          </div>
+          <div class="a-field">
+            <div class="a-lbl">Role</div>
+            <select id="r-role">
+              <option value="Admin">Admin</option>
+              <option value="Manajer">Manajer</option>
+              <option value="Kasir" selected>Kasir</option>
+              <option value="Gudang">Gudang</option>
+            </select>
+          </div>
+          <div class="a-field">
+            <div class="a-lbl">Password <span style="color:#ef4444">*</span></div>
+            <div class="a-input-wrap">
+              <input id="r-pass" type="password" placeholder="Min. 6 karakter" oninput="checkStrength(this.value)">
+              <button class="a-eye" onclick="togglePw('r-pass',this)">&#128065;</button>
+            </div>
+            <div class="pw-strength"><div class="pw-bar" id="pw-bar"></div></div>
+            <div class="pw-hint" id="pw-hint">Masukkan password</div>
+          </div>
+          <div class="a-field">
+            <div class="a-lbl">Konfirmasi Password <span style="color:#ef4444">*</span></div>
+            <div class="a-input-wrap">
+              <input id="r-pass2" type="password" placeholder="Ulangi password" onkeydown="if(event.key==='Enter')doRegister()">
+              <button class="a-eye" onclick="togglePw('r-pass2',this)">&#128065;</button>
+            </div>
+          </div>
+          <button class="auth-btn" onclick="doRegister()">&#10003; Buat Akun</button>
+          <div class="auth-divider"><span>atau</span></div>
+          <div style="text-align:center;font-size:12px;color:#64748b">
+            Sudah punya akun? <a onclick="switchTab('login')" style="color:#3b82f6;cursor:pointer;font-weight:600">Masuk di sini</a>
+          </div>
+        </div>
+        <!-- LUPA PASSWORD -->
+        <div class="auth-form-page" id="form-forgot">
+          <button class="fp-back" onclick="switchTab('login')">&#8592; Kembali ke Login</button>
+          <div class="auth-msg" id="fp-msg"></div>
+          <div style="font-size:13px;color:#475569;margin-bottom:16px;line-height:1.6">
+            Masukkan username atau email akun Anda untuk melihat kembali password Anda.
+          </div>
+          <div class="a-field">
+            <div class="a-lbl">Username atau Email</div>
+            <input id="fp-input" type="text" placeholder="Masukkan username / email" onkeydown="if(event.key==='Enter')doForgot()">
+          </div>
+          <button class="auth-btn" onclick="doForgot()">&#128273; Temukan Akun</button>
+          <div class="auth-msg info" id="fp-result" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:16px;font-size:11px;color:#64748b">
+      RestoManager v1.0 &mdash; Sistem Informasi Inventory Restoran
+    </div>
+  </div>
+</div>
 
 <div class="app">
 
@@ -170,9 +317,12 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#3b82f6;box-sh
     <div class="sb-item" onclick="goPage('pengguna')"><span class="si">&#128101;</span>Pengguna</div>
   </nav>
   <div class="sb-footer">
-    <div class="sb-user">
-      <div class="sb-avatar">A</div>
-      <div><div class="sb-uname">Ahmad Fauzi</div><div class="sb-urole">Admin</div></div>
+    <div class="sb-user" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="sb-avatar">A</div>
+        <div><div class="sb-uname">Ahmad Fauzi</div><div class="sb-urole">Admin</div></div>
+      </div>
+      <button onclick="doLogout()" title="Keluar" style="background:none;border:none;cursor:pointer;color:#ef4444;font-size:18px;padding:4px;border-radius:6px" onmouseover="this.style.background='#7f1d1d33'" onmouseout="this.style.background='none'">&#10148;</button>
     </div>
   </div>
 </div>
@@ -914,8 +1064,201 @@ function simpanUser(){
   renderPengguna();
 }
 
+
+// ═══════════════ AUTH SYSTEM ═══════════════
+const USERS_KEY = 'rm_users';
+const SESSION_KEY = 'rm_session';
+
+function getUsers() {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
+  catch(e) { return []; }
+}
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+function getSession() {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); }
+  catch(e) { return null; }
+}
+function saveSession(user) {
+  sessionStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+function clearSession() {
+  sessionStorage.removeItem(SESSION_KEY);
+}
+
+function switchTab(tab) {
+  ['login','register','forgot'].forEach(t => {
+    document.getElementById('form-'+t).classList.remove('active');
+  });
+  document.getElementById('form-'+tab).classList.add('active');
+  ['login','register'].forEach(t => {
+    const el = document.getElementById('tab-'+t);
+    if(el) el.classList.toggle('active', t===tab);
+  });
+  clearAuthMsgs();
+  if(tab==='login') refreshDemoChips();
+}
+
+function clearAuthMsgs() {
+  ['login-msg','reg-msg','fp-msg','fp-result'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.className='auth-msg'; el.textContent=''; }
+  });
+}
+
+function showAuthMsg(id, msg, type='err') {
+  const el = document.getElementById(id);
+  el.className = 'auth-msg show '+type;
+  el.innerHTML = msg;
+}
+
+function togglePw(inputId, btn) {
+  const inp = document.getElementById(inputId);
+  const isText = inp.type === 'text';
+  inp.type = isText ? 'password' : 'text';
+  btn.textContent = isText ? '\u{1F441}' : '\u{1F576}';
+}
+
+function checkStrength(val) {
+  const bar = document.getElementById('pw-bar');
+  const hint = document.getElementById('pw-hint');
+  let score = 0;
+  if(val.length >= 6) score++;
+  if(val.length >= 10) score++;
+  if(/[A-Z]/.test(val)) score++;
+  if(/[0-9]/.test(val)) score++;
+  if(/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    {w:'0%', bg:'#e2e8f0', txt:'Masukkan password'},
+    {w:'25%', bg:'#ef4444', txt:'Terlalu lemah'},
+    {w:'50%', bg:'#f59e0b', txt:'Lemah'},
+    {w:'75%', bg:'#3b82f6', txt:'Cukup kuat'},
+    {w:'90%', bg:'#22c55e', txt:'Kuat'},
+    {w:'100%', bg:'#16a34a', txt:'Sangat kuat'},
+  ];
+  const lv = levels[Math.min(score, 5)];
+  bar.style.width = lv.w;
+  bar.style.background = lv.bg;
+  hint.textContent = lv.txt;
+  hint.style.color = lv.bg;
+}
+
+function refreshDemoChips() {
+  const chips = document.getElementById('demo-chips');
+  if(!chips) return;
+  const users = getUsers();
+  if(!users.length){
+    chips.innerHTML = '<div style="font-size:11px;color:#94a3b8;font-style:italic">Belum ada akun — silakan daftar terlebih dahulu</div>';
+    return;
+  }
+  chips.innerHTML = users.map(u =>
+    `<span class="user-chip" onclick="fillLogin('${u.username}')" title="Klik untuk isi username" style="cursor:pointer">
+      &#128100; ${u.nama} <span style="color:#94a3b8">(${u.role})</span>
+    </span>`
+  ).join('');
+}
+
+function fillLogin(username) {
+  document.getElementById('l-user').value = username;
+  document.getElementById('l-pass').focus();
+}
+
+function doLogin() {
+  const input = document.getElementById('l-user').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  if(!input || !pass) { showAuthMsg('login-msg','&#9888; Username/email dan password wajib diisi!'); return; }
+  const users = getUsers();
+  const user  = users.find(u => (u.username===input || u.email===input) && u.password===pass);
+  if(!user) {
+    showAuthMsg('login-msg','&#10007; Username/email atau password salah. Pastikan sudah mendaftar terlebih dahulu.');
+    return;
+  }
+  saveSession(user);
+  applySession(user);
+  document.getElementById('auth-screen').classList.remove('show');
+  renderDashboard();
+}
+
+function doRegister() {
+  const nama  = document.getElementById('r-nama').value.trim();
+  const uname = document.getElementById('r-user').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const role  = document.getElementById('r-role').value;
+  const pass  = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+
+  if(!nama||!uname||!email||!pass) { showAuthMsg('reg-msg','&#9888; Semua field wajib diisi!'); return; }
+  if(pass.length < 6)              { showAuthMsg('reg-msg','&#9888; Password minimal 6 karakter!'); return; }
+  if(pass !== pass2)               { showAuthMsg('reg-msg','&#9888; Konfirmasi password tidak cocok!'); return; }
+  if(email.indexOf('@')<1||email.indexOf('.')<3) { showAuthMsg('reg-msg','&#9888; Format email tidak valid!'); return; }
+
+  const users = getUsers();
+  if(users.find(u => u.username === uname)) { showAuthMsg('reg-msg','&#9888; Username sudah dipakai, pilih yang lain.'); return; }
+  if(users.find(u => u.email === email))    { showAuthMsg('reg-msg','&#9888; Email sudah terdaftar.'); return; }
+
+  const newUser = {id: Date.now(), nama, username:uname, email, password:pass, role};
+  users.push(newUser);
+  saveUsers(users);
+
+  // Tambah ke daftar pengguna sistem
+  S.pengguna.push({id:newUser.id, nama, email, role, status:'Aktif'});
+
+  showAuthMsg('reg-msg', '&#10003; Akun berhasil dibuat! Silakan masuk.', 'ok');
+  setTimeout(() => {
+    switchTab('login');
+    document.getElementById('l-user').value = uname;
+  }, 1500);
+}
+
+function doForgot() {
+  const input = document.getElementById('fp-input').value.trim();
+  if(!input){ showAuthMsg('fp-msg','&#9888; Masukkan username atau email!'); return; }
+  const users = getUsers();
+  const user  = users.find(u => u.username===input || u.email===input);
+  if(!user) {
+    showAuthMsg('fp-msg','&#10007; Akun dengan username/email tersebut tidak ditemukan.');
+    return;
+  }
+  const el = document.getElementById('fp-result');
+  el.className = 'auth-msg show ok';
+  el.innerHTML = `&#10003; Akun ditemukan!<br>
+    <strong>Nama:</strong> ${user.nama}<br>
+    <strong>Username:</strong> ${user.username}<br>
+    <strong>Password:</strong> <span style="font-family:monospace;background:#d1fae5;padding:2px 6px;border-radius:4px">${user.password}</span>`;
+}
+
+function applySession(user) {
+  // Update sidebar user info
+  const av = document.querySelector('.sb-avatar');
+  const nm = document.querySelector('.sb-uname');
+  const rl = document.querySelector('.sb-urole');
+  if(av) av.textContent = user.nama.charAt(0).toUpperCase();
+  if(nm) nm.textContent = user.nama;
+  if(rl) rl.textContent = user.role;
+}
+
+function doLogout() {
+  clearSession();
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  switchTab('login');
+  refreshDemoChips();
+  document.getElementById('auth-screen').classList.add('show');
+}
+
+// Check existing session on load
+(function initAuth(){
+  refreshDemoChips();
+  const session = getSession();
+  if(session){
+    applySession(session);
+    document.getElementById('auth-screen').classList.remove('show');
+  }
+})();
+
 // ═══════════════ INIT ═══════════════
-renderDashboard();
+// renderDashboard called after login
 </script>
 </body>
 </html>
